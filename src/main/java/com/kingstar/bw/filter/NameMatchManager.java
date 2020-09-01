@@ -54,7 +54,7 @@ public class NameMatchManager implements MatchManager {
 
 
             //名称匹配度大于等于设置的匹配度
-            BigDecimal matchRate = LevenshteinDistance.computeLevenshteinDistanceRate(search.getName(), entry.getValue());
+            BigDecimal matchRate = LevenshteinDistance.computeLevenshteinDistanceRate(search.getName(), entry.getKey());
             //匹配度大于精准度,根据匹配的结果区分机构或个人
             if (matchRate.compareTo(Constant.PERCISION) > -1) {
 
@@ -86,7 +86,7 @@ public class NameMatchManager implements MatchManager {
                     try {
                         personMatchChain.execute(coChainContext);
                     } catch (Exception e) {
-                        logger.error(e);
+                        logger.error("匹配错误!",e);
                     }
                 } else {
                     //机构,证件号,国家,地址 处理链
@@ -95,7 +95,7 @@ public class NameMatchManager implements MatchManager {
                     try {
                         orgMatchChain.execute(coChainContext);
                     } catch (Exception e) {
-                        logger.error(e);
+                        logger.error("匹配错误!",e);
                     }
                 }
 //                if (matchRate.compareTo(Constant.PERCISION) > -1) {

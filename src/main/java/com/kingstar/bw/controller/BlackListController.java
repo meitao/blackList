@@ -20,7 +20,7 @@ public class BlackListController {
 
     @RequestMapping(value = {"/match"}, method = {RequestMethod.POST}, produces = {"application/json; charset=UTF-8"})
     @ResponseBody
-    public String match(HttpServletRequest request, HttpServletResponse response, @RequestBody Search search) {
+    public  String  match(HttpServletRequest request, HttpServletResponse response, @RequestBody Search search) {
         ChainContext chainContext = new ChainContext();
         chainContext.setSearch(search);
         List<ChainContext> list = matchManagerFacade.match(chainContext);

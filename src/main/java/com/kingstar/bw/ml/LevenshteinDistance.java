@@ -1,5 +1,7 @@
 package com.kingstar.bw.ml;
 
+import com.kingstar.bw.exception.PlatException;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -23,6 +25,13 @@ public class LevenshteinDistance {
      * @return
      */
     public static int computeLevenshteinDistance(CharSequence src, CharSequence dst) {
+        if (src==null){
+            throw new PlatException("src不能为空!");
+        }
+        if (dst==null){
+            throw new PlatException("dst不能为空!");
+        }
+
         int[][] distance = new int[src.length() + 1][dst.length() + 1];
 
         for (int i = 0; i <= src.length(); i++)

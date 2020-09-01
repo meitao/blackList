@@ -5,6 +5,7 @@ import com.kingstar.bw.exception.PlatException;
 import com.kingstar.bw.filter.Params;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,7 +37,7 @@ public class MathUtil {
             sum = sum.add(params.getRate())  ;
             sumMo = sumMo.add(params.getWeight());
         }
-        chainContext.setSumRate(sum.divide(sumMo,4));
+        chainContext.setSumRate(sum.divide(sumMo,2, RoundingMode.HALF_UP));
         chainContext.setEndRate(chainContext.getSumRate());
     }
 
@@ -57,7 +58,7 @@ public class MathUtil {
             sum.add(params.getRate())  ;
             sumMo.add(params.getWeight());
         }
-        chainContext.setSumRate(sum.divide(sumMo));
+        chainContext.setSumRate(sum.divide(sumMo,2, RoundingMode.HALF_UP));
         chainContext.setEndRate(chainContext.getSumRate());
     }
 

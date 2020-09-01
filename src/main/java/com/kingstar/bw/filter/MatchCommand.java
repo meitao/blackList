@@ -49,7 +49,13 @@ public abstract class MatchCommand implements Command {
         if(context==null){
             throw  new PlatException("context对象不能为空!");
         }
-        return (ChainContext)context;
+
+        ChainContext context1 =  (ChainContext)context ;
+
+        if (context1.getSearch()==null){
+            throw  new PlatException("search对象不能为空!");
+        }
+        return context1;
     }
 
     /**
@@ -62,6 +68,11 @@ public abstract class MatchCommand implements Command {
         Map<String, Search> allParm = (Map<String, Search>) LocalData.getCollection(Constant.KEY_ALL);
         //黑名单中的目标对象
         Search tarSearch = allParm.get(id);
+
+        if(tarSearch==null){
+            throw new PlatException("黑名单中没有"+id+"对应的数据!");
+        }
+
         return tarSearch;
     }
 

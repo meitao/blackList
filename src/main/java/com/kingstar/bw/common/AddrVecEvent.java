@@ -10,6 +10,7 @@ import org.deeplearning4j.text.sentenceiterator.labelaware.LabelAwareFileSentenc
 import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,6 +25,7 @@ import java.util.Map;
  * @Date: 20-8-26 上午11:39
  * @Version: 1.0
  */
+@Service
 public class AddrVecEvent implements InitDataEvent {
 
 

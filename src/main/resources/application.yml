@@ -1,2 +1,12 @@
 server:
   port: 8080
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@10.243.140.63:1521:wolfdb
+    username: wolf
+    password: wolf
+    max-idle: 10
+    max-wait: 10000
+    min-idle: 5
+    initial-size: 5

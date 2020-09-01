@@ -49,7 +49,6 @@ public class Doc2VecTest {
                 .tokenizerFactory(token)
                 .sampling(0)
                 .build();
-
         vec.fit();
 
 

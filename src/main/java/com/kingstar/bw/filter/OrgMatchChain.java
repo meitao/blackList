@@ -3,8 +3,6 @@ package com.kingstar.bw.filter;
 import com.kingstar.bw.common.Constant;
 import org.apache.commons.chain.impl.ChainBase;
 
-import java.math.BigDecimal;
-
 /**
  * @Author: meitao
  * @Description: ${description}
@@ -19,7 +17,7 @@ public class OrgMatchChain extends ChainBase {
         NationMatchCommond nationMatchCommond = new NationMatchCommond();
         Params params3 = new Params();
         params3.setRate(Constant.PERCISION);
-        params3.setWeight(new BigDecimal("0.05"));
+        params3.setWeight(Constant.NATION_WEIGHT);
         nationMatchCommond.setParams(params3);
         addCommand(nationMatchCommond);
 
@@ -27,7 +25,7 @@ public class OrgMatchChain extends ChainBase {
         AddrMatchCommond addrMatchCommond = new AddrMatchCommond();
         Params params4 = new Params();
         params4.setRate(Constant.PERCISION);
-        params4.setWeight(new BigDecimal("0.05"));
+        params4.setWeight(Constant.ADDR_WEIGHT);
         addrMatchCommond.setParams(params4);
         addCommand(addrMatchCommond);
 

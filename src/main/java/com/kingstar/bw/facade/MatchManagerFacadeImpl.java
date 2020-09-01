@@ -4,6 +4,7 @@ import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
 import com.kingstar.bw.exception.PlatException;
 import com.kingstar.bw.filter.NameMatchManager;
+import com.kingstar.bw.filter.NumberMatchManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -22,7 +23,7 @@ public class MatchManagerFacadeImpl implements MatchManagerFacade {
     @Autowired
     NameMatchManager nameMatchManager ;
     @Autowired
-    NameMatchManager numberMatchManager ;
+    NumberMatchManager numberMatchManager ;
 
 
     @Override

@@ -2,6 +2,7 @@ package com.kingstar.bw.filter;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
+import com.kingstar.bw.exception.PlatException;
 import com.kingstar.bw.ml.LevenshteinDistance;
 import org.apache.commons.chain.Context;
 import org.springframework.stereotype.Service;
