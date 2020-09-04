@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +28,7 @@ import java.util.Map;
 @Service
 public class NameListEvent implements InitDataEvent {
 
-    public static final String reg = ",";
+//    public static final String reg = ",";
 
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -35,23 +37,39 @@ public class NameListEvent implements InitDataEvent {
     private JdbcTemplate jdbcTemplate;
 
 
-    public static final String FILE_NAME = "/home/meitao/test/xm.csv";
+//    public static final String FILE_NAME = "/home/meitao/test/xm.csv";
+
 
     @Override
     public void onFire() {
 
-        Map<String, String> param = new HashMap<String, String>(8000000);
-        jdbcTemplate.setFetchSize(10000);
+        Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>(600);
+//        Map<String, List<String>> param = new HashMap<String, List<String>>(8000000);
+        jdbcTemplate.setFetchSize(100000);
+
         long start = System.currentTimeMillis();
+
+        /*
+         * 根据名字的字符串长度进行分片，不同的长度在不同的分片上，分片的主节点在list上，长度为list的下标
+         * @todo在根据个人和机构分成两个list
+         *
+         */
         jdbcTemplate.query("SELECT  id, NAME FROM AMLCONFIG.T_EXPOSED_PEOPLE_NAME ", new RowMapper<String>() {
+//        jdbcTemplate.query("SELECT  id, NAME FROM T_EXPOSED_PEOPLE_NAME ", new RowMapper<String>() {
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-                param.put(rs.getString("NAME"),rs.getString("ID"));
+                String name = rs.getString("NAME");
+                String id = rs.getString("ID");
+                if (StringUtils.isEmpty(name)) {
+                    return null ;
+                }
+                CommondUtil.putPatition(name,id,map);
                 return null;
             }
         });
         long end = System.currentTimeMillis();
-        logger.info((end-start)+" name 加载成功!"+param.size());
+        logger.info((end - start) + " name 加载成功!" + map.size());
+        LocalData.setCollection(Constant.KEY_NAME, map);
 
 //        List<String> taaccountids = jdbcTemplate.query("select sysdate from dual", new RowMapper<String>() {
 //            @Override
@@ -59,7 +77,6 @@ public class NameListEvent implements InitDataEvent {
 //                return resultSet.getString("sysdate");
 //            }
 //        });
-
 
 
 //        BufferedReader bufferedReader = null;
@@ -80,7 +97,7 @@ public class NameListEvent implements InitDataEvent {
 //                param.put(words[0], name);
 //            }
 //
-            LocalData.setCollection(Constant.KEY_NAME,param);
+
 //        } catch (IOException e) {
 //            throw new PlatException(e);
 //        } finally {
@@ -92,7 +109,5 @@ public class NameListEvent implements InitDataEvent {
 //                }
 //            }
 //        }
-
-
     }
 }

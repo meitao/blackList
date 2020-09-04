@@ -7,13 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,19 +38,26 @@ public class NumberListEvent implements InitDataEvent {
     private JdbcTemplate jdbcTemplate;
     @Override
     public void onFire() {
-        Map<String, String> param = new HashMap<String, String>(6000000);
-        jdbcTemplate.setFetchSize(10000);
+        Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>(600);
+        jdbcTemplate.setFetchSize(100000);
         long start = System.currentTimeMillis();
         jdbcTemplate.query(" SELECT  id,ID_NO FROM AMLCONFIG.T_EXPOSED_PEOPLE_ID ", new RowMapper<String>() {
+//        jdbcTemplate.query(" SELECT  id,ID_NO FROM  T_EXPOSED_PEOPLE_ID ", new RowMapper<String>() {
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-                param.put(rs.getString("ID_NO"),rs.getString("ID"));
+                    String name = rs.getString("ID_NO");
+                    String id = rs.getString("ID");
+                    //判断名字的长度获取相应的hash
+                    if (StringUtils.isEmpty(name)) {
+                        return null;
+                    }
+                CommondUtil.putPatition(name,id,map);
                 return null;
             }
         });
         long end = System.currentTimeMillis();
-        logger.info((end-start)+" name 加载成功!"+param.size());
-
+        logger.info((end-start)+" number 加载成功!"+map.size());
+        LocalData.setCollection(Constant.KEY_NUMBER,map);
 
 //        Map<String, String> param = new HashMap<String, String>();
 //        BufferedReader bufferedReader = null;
@@ -66,7 +76,7 @@ public class NumberListEvent implements InitDataEvent {
 //                String name =  words[1].replaceAll("·", "");
 //                param.put(words[0], name);
 //            }
-            LocalData.setCollection(Constant.KEY_NUMBER,param);
+//            LocalData.setCollection(Constant.KEY_NUMBER,param);
 //        } catch (IOException e) {
 //            throw new PlatException(e);
 //        } finally {

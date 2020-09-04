@@ -27,18 +27,18 @@ public class BrithDayMatch extends AbstractMatcher{
      */
     @Override
     public List<String> match(Search search) {
-        //获取内存数据库中的名称信息
-        Map<String, Search>  param = LocalData.getCollection(Constant.KEY_ALL);
-        //结果,保存数据的id
-        List<String> result = new ArrayList<String>();
-        BigDecimal rate = new BigDecimal(0);
-        //当输入为空,rate为0
-        if(StringUtils.isEmpty(search.getBirthDay())){
-           return null;
-        }
+//        //获取内存数据库中的名称信息
+//        Map<String, Search>  param = LocalData.getCollection(Constant.KEY_ALL);
+//        //结果,保存数据的id
+//        List<String> result = new ArrayList<String>();
+//        BigDecimal rate = new BigDecimal(0);
+//        //当输入为空,rate为0
+//        if(StringUtils.isEmpty(search.getBirthDay())){
+//           return null;
+//        }
 
 
         //当输入项不为空,黑名单为空为50%
-        return result;
+        return null;
     }
 }

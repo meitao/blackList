@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 /**
  * @Author: meitao
@@ -32,25 +33,31 @@ public class BrithDayMatchCommond extends MatchCommand {
         ChainContext chainContext = this.convert(context);
 
         Search search = chainContext.getSearch();
-        Search tarSearch = this.getTarget(search.getId());
-
+        List<Search> tarSearchs = this.getTarget(search.getId());
         BigDecimal rate = new BigDecimal(0);
-        //当为空,rate为0
-        if (!StringUtils.isEmpty(search.getNumber())) {
-            //当黑名出生日期为空 50%
-            if (StringUtils.isEmpty(tarSearch.getNumber())) {
-                rate = BigDecimal.valueOf(0.5);
-            } else {
-                //计算最短路径除以两字符的最短长度,d（src,tar）/min(src,tar)
-                int distance = LevenshteinDistance.computeLevenshteinDistance_Optimized(search.getBirthDay(), tarSearch.getBirthDay());
-                int min = Math.min(search.getBirthDay().length(), tarSearch.getBirthDay().length());
-                BigDecimal result = new BigDecimal(min - distance);
-                result.divide(BigDecimal.valueOf(min), 2, RoundingMode.HALF_UP);
+        BigDecimal tarRate = new BigDecimal(0);
+        for(Search tarSearch :tarSearchs  ){
+            //当为空,rate为0
+            if (!StringUtils.isEmpty(search.getNumber())) {
+                //当黑名出生日期为空 50%
+                if (StringUtils.isEmpty(tarSearch.getNumber())) {
+                    rate = BigDecimal.valueOf(0.5);
+                } else {
+                    //计算最短路径除以两字符的最短长度,d（src,tar）/min(src,tar)
+                    int distance = LevenshteinDistance.computeLevenshteinDistance_Optimized(search.getBirthDay(), tarSearch.getBirthDay());
+                    int min = Math.min(search.getBirthDay().length(), tarSearch.getBirthDay().length());
+                    BigDecimal result = new BigDecimal(min - distance);
+                    result.divide(BigDecimal.valueOf(min), 2, RoundingMode.HALF_UP);
+                }
+            }
+            //将匹配的生日日期返回
+            //取id列表中最大匹配的值
+            if (tarRate.compareTo(rate)<0||StringUtils.isEmpty(search.getBirthDay())){
+                tarRate = rate;
+                search.setBirthDay(tarSearch.getBirthDay());
             }
         }
-        //将匹配的生日日期返回
-        search.setBirthDay(tarSearch.getBirthDay());
-        return this.isEnd(chainContext, rate);
+        return this.isEnd(chainContext, tarRate);
     }
 
 }

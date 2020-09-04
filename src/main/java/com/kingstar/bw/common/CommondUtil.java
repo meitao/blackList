@@ -5,6 +5,10 @@ import com.kingstar.bw.filter.NumberMatchCommond;
 import com.kingstar.bw.filter.Params;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: meitao
@@ -27,5 +31,32 @@ public class CommondUtil {
 //        params1.setWeight(new BigDecimal("0.5"));
 //        matchCommand.setParams(params1);
         return matchCommand;
+    }
+
+    /**
+     * 判断名字的长度获取相应的hash ,对数据进行分区
+     * @param name
+     * @param id
+     * @param map
+     */
+    public static void putPatition(String name,String id ,Map<String , Map<String, List<String>>> map){
+        //判断名字的长度获取相应的hash
+        String len = String.valueOf(name.length());
+        Map<String, List<String>> param = map.get(len);
+        List<String> list = null;
+        //判断map是否为空，如果为空则新建hash
+        if (param == null) {
+            param = new HashMap<String, List<String>>();
+            list = new ArrayList<String>();
+        } else {
+            list = param.get(name);
+            if (list == null) {
+                list = new ArrayList<String>();
+            }
+        }
+        list.add(id);
+        //新增或更新name对应的值
+        param.put(name, list);
+        map.put(len, param);
     }
 }

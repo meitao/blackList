@@ -29,7 +29,7 @@ import java.util.Map;
 public class AddrVecEvent implements InitDataEvent {
 
 
-    public static final String FILE_NAME = "/home/meitao/test/addr.csv";
+    public static final String FILE_NAME = "C:\\Users\\tao.mei\\work\\blacklist\\addr.csv";
 
     protected final Log logger = LogFactory.getLog(getClass());
 

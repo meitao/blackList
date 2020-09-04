@@ -27,18 +27,18 @@ public class NumberMatch extends AbstractMatcher{
     @Override
     public List<String> match(Search search) {
         //获取内存数据库中的名称信息
-        Map<String,String> param = LocalData.getCollection(Constant.KEY_NUMBER);
+//        Map<String,String> param = LocalData.getCollection(Constant.KEY_NUMBER);
         //结果,保存数据的id
         List<String> result = new ArrayList<String>();
 
         //姓名最短编辑距离匹配
-        Set<Map.Entry<String,String>> set = param.entrySet();
-        for (Map.Entry<String,String> entry:set){
+//        Set<Map.Entry<String,String>> set = param.entrySet();
+//        for (Map.Entry<String,String> entry:set){
 //           if (LevenshteinDistance.computeLevenshteinDistanceRate(search.getNumber(),entry.getValue()).compareTo(this.getRate())>-1){
 //               result.add(entry.getKey());
 //           }
-
-        }
+//
+//        }
 
         return result;
     }

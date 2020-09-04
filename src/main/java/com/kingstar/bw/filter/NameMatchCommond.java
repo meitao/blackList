@@ -6,8 +6,10 @@ import com.kingstar.bw.exception.PlatException;
 import com.kingstar.bw.ml.LevenshteinDistance;
 import org.apache.commons.chain.Context;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @Author: meitao
@@ -31,12 +33,21 @@ public class NameMatchCommond extends MatchCommand {
 
         Search search = chainContext.getSearch();
 
-        Search tarSearch = this.getTarget(search.getId());
+        List<Search> tarSearchs = this.getTarget(search.getId());
+        BigDecimal rate = new BigDecimal(0);
+        BigDecimal tarRate = new BigDecimal(0);
+        for (Search tarSearch : tarSearchs) {
+            //名称匹配度大于等于设置的匹配度
+            rate = LevenshteinDistance.computeLevenshteinDistanceRate(search.getName(), tarSearch.getName());
+            //取id列表中最大匹配的值
+            if (tarRate.compareTo(rate) < 0||StringUtils.isEmpty(search.getName())) {
+                tarRate = rate;
+                search.setName(tarSearch.getName());
+            }
+        }
 
-        //名称匹配度大于等于设置的匹配度
-        BigDecimal nameMatch = LevenshteinDistance.computeLevenshteinDistanceRate(search.getName(), tarSearch.getName());
 
-        return this.isEnd(chainContext, nameMatch);
+        return this.isEnd(chainContext, tarRate);
     }
 
 }

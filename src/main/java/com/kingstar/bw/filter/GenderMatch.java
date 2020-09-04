@@ -28,7 +28,7 @@ public class GenderMatch extends AbstractMatcher{
     @Override
     public List<String> match(Search search) {
         //获取内存数据库中的名称信息
-        Map<String, Search>  param = LocalData.getCollection(Constant.KEY_ALL);
+//        Map<String, Search>  param = LocalData.getCollection(Constant.KEY_ALL);
         //结果,保存数据的id
         List<String> result = new ArrayList<String>();
         BigDecimal rate = new BigDecimal(0);
@@ -37,14 +37,14 @@ public class GenderMatch extends AbstractMatcher{
            return null;
         }
 
-        Search search1 =  param.get(search.getId());
-        //当性别匹配
-        if (search1.getGender().equals(search.getGender())){
-            rate = BigDecimal.valueOf(1);
-        }else{
-            //当性别不匹配
-            rate = BigDecimal.valueOf(-10);
-        }
+//        Search search1 =  param.get(search.getId());
+//        //当性别匹配
+//        if (search1.getGender().equals(search.getGender())){
+//            rate = BigDecimal.valueOf(1);
+//        }else{
+//            //当性别不匹配
+//            rate = BigDecimal.valueOf(-10);
+//        }
 
         return result;
     }

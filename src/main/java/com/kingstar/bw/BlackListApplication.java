@@ -16,9 +16,6 @@ import java.util.List;
 public class BlackListApplication {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     private NameListEvent nameListEvent ;
 
     @Autowired
@@ -26,11 +23,16 @@ public class BlackListApplication {
 
     @Autowired
     private AllBlackListEvent allBlackListEvent ;
+
+    @Autowired
+    private MainBlackListEvent mainBlackListEvent ;
+    @Autowired
+    private NationListEvent nationListEvent ;
+    @Autowired
+    private BirthdayListEvent birthdayListEvent ;
+
     @Autowired
     private AddrVecEvent addrVecEvent ;
-
-
-
 
     public static void main(String[] args) {
         SpringApplication.run(BlackListApplication.class, args);
@@ -42,7 +44,9 @@ public class BlackListApplication {
         InitDataListener initDataListener =  new DefaultInitDataListenerImpl();
         initDataListener.add(nameListEvent);
         initDataListener.add(numberListEvent);
-        initDataListener.add(allBlackListEvent);
+        initDataListener.add(mainBlackListEvent);
+        initDataListener.add(nationListEvent);
+        initDataListener.add(birthdayListEvent);
         initDataListener.add(addrVecEvent);
         return initDataListener;
     }

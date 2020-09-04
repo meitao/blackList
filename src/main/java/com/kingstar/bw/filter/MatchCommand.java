@@ -10,6 +10,7 @@ import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,17 +64,17 @@ public abstract class MatchCommand implements Command {
      * @param id
      * @return
      */
-    public Search getTarget(String id){
+    public List<Search> getTarget(String id){
         //获取内存数据库中的所有的数据
-        Map<String, Search> allParm = (Map<String, Search>) LocalData.getCollection(Constant.KEY_ALL);
+        Map<String, List<Search>> allParm = LocalData.getCollection(Constant.KEY_ALL);
         //黑名单中的目标对象
-        Search tarSearch = allParm.get(id);
+        List<Search> tarSearchs = allParm.get(id);
 
-        if(tarSearch==null){
+        if(tarSearchs==null){
             throw new PlatException("黑名单中没有"+id+"对应的数据!");
         }
 
-        return tarSearch;
+        return tarSearchs;
     }
 
     /**

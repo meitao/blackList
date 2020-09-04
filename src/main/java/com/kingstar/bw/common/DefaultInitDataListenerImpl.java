@@ -2,6 +2,10 @@ package com.kingstar.bw.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: meitao
@@ -15,10 +19,19 @@ public class DefaultInitDataListenerImpl implements InitDataListener {
 
     @Override
     public void init() {
+        //多线程处理匹配
+        ExecutorService executorService =
+                new ThreadPoolExecutor(4, 4,
+                        0L, TimeUnit.MILLISECONDS,
+                        new LinkedBlockingQueue<Runnable>(1000000));
         //触发事件
         for(InitDataEvent event:list){
-            event.onFire();
+            executorService.execute(()->{
+                event.onFire();
+            });
         }
+        //关掉线程池
+        executorService.shutdown();
     }
 
     @Override

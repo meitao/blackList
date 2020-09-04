@@ -34,38 +34,45 @@ public class NationMatchCommond extends MatchCommand{
         ChainContext chainContext = this.convert(context);
 
         Search search = chainContext.getSearch();
-        Search tarSearch = this.getTarget(search.getId());
+        List<Search> tarSearchs = this.getTarget(search.getId());
 
         BigDecimal rate = new BigDecimal(0);
-        //当为空,rate为0
-        if (!StringUtils.isEmpty(search.getNumber())) {
-            //自然人
-            if (search.isPer()) {
-                //当输入项不为空,黑名单为空为50%
-                if (StringUtils.isEmpty(tarSearch.getNation())) {
-                    rate = BigDecimal.valueOf(0.5);
-                }
+        BigDecimal tarRate = new BigDecimal(0);
+        for (Search tarSearch: tarSearchs){
+            //当为空,rate为0
+            if (!StringUtils.isEmpty(search.getNumber())) {
+                //自然人
+                if (search.isPer()) {
+                    //当输入项不为空,黑名单为空为50%
+                    if (StringUtils.isEmpty(tarSearch.getNation())) {
+                        rate = BigDecimal.valueOf(0.5);
+                    }
 
-            } else {
-                //机构
-                //当输入项不等于黑名单0%
+                } else {
+                    //机构
+                    //当输入项不等于黑名单0%
+                    if (search.getNation().equals(tarSearch.getNation())) {
+                        rate = BigDecimal.valueOf(0);
+                    }
+
+                }
+                //输入项等于黑名单数据100%
                 if (search.getNation().equals(tarSearch.getNation())) {
-                    rate = BigDecimal.valueOf(0);
+                    rate = BigDecimal.valueOf(1);
                 }
-
+                //当输入项不等于黑名单-1000%
+                if (search.getNation().equals(tarSearch.getNation())) {
+                    rate = BigDecimal.valueOf(-10);
+                }
             }
-            //输入项等于黑名单数据100%
-            if (search.getNation().equals(tarSearch.getNation())) {
-                rate = BigDecimal.valueOf(1);
-            }
-            //当输入项不等于黑名单-1000%
-            if (search.getNation().equals(tarSearch.getNation())) {
-                rate = BigDecimal.valueOf(-10);
+            //取id列表中最大匹配的值
+            if (tarRate.compareTo(rate)<1||StringUtils.isEmpty(search.getNation())){
+                tarRate = rate;
+                search.setNation(tarSearch.getNation());
             }
         }
-        search.setNation(tarSearch.getNation());
 
         //证件号匹配度大于等于设置的匹配度
-        return this.isEnd(chainContext, rate);
+        return this.isEnd(chainContext, tarRate);
     }
 }
