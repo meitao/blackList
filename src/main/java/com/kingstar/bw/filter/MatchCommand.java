@@ -8,6 +8,7 @@ import com.kingstar.bw.common.MathUtil;
 import com.kingstar.bw.exception.PlatException;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -64,17 +65,20 @@ public abstract class MatchCommand implements Command {
      * @param id
      * @return
      */
-    public List<Search> getTarget(String id){
+    public  Search getTarget(String id){
+        if(StringUtils.isEmpty(id)){
+            throw new PlatException(" id 不能为空!");
+        }
         //获取内存数据库中的所有的数据
-        Map<String, List<Search>> allParm = LocalData.getCollection(Constant.KEY_ALL);
+        Map<String,Search> allParm = LocalData.getCollection(Constant.KEY_ALL);
         //黑名单中的目标对象
-        List<Search> tarSearchs = allParm.get(id);
+        Search search = allParm.get(id);
 
-        if(tarSearchs==null){
+        if(search==null){
             throw new PlatException("黑名单中没有"+id+"对应的数据!");
         }
 
-        return tarSearchs;
+        return search;
     }
 
     /**
@@ -100,5 +104,28 @@ public abstract class MatchCommand implements Command {
         }
         return false;
     }
+    /**
+     * 获取key值对应列表
+     * @param id
+     * @param key
+     * @return
+     */
+    public List<String> getValue(String id,String key){
+        if(StringUtils.isEmpty(id)){
+            throw new PlatException(" id 不能为空!");
+        }
+        if(StringUtils.isEmpty(key)){
+            throw new PlatException(" key 不能为空!");
+        }
+        //获取内存数据库中的所有的数据
+        Map<String, List<String>> allParm = LocalData.getCollection(key);
+        //黑名单中的目标对象
+        List<String> tars = allParm.get(id);
 
+        if(tars==null){
+            throw new PlatException("黑名单中没有"+id+"对应的数据!");
+        }
+
+        return tars;
+    }
 }

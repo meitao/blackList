@@ -14,40 +14,7 @@ import java.util.List;
 
 @SpringBootApplication
 public class BlackListApplication {
-
-    @Autowired
-    private NameListEvent nameListEvent ;
-
-    @Autowired
-    private NumberListEvent numberListEvent ;
-
-    @Autowired
-    private AllBlackListEvent allBlackListEvent ;
-
-    @Autowired
-    private MainBlackListEvent mainBlackListEvent ;
-    @Autowired
-    private NationListEvent nationListEvent ;
-    @Autowired
-    private BirthdayListEvent birthdayListEvent ;
-
-    @Autowired
-    private AddrVecEvent addrVecEvent ;
-
     public static void main(String[] args) {
         SpringApplication.run(BlackListApplication.class, args);
-    }
-
-    @Bean
-    public InitDataListener initDataListener() {
-
-        InitDataListener initDataListener =  new DefaultInitDataListenerImpl();
-        initDataListener.add(nameListEvent);
-        initDataListener.add(numberListEvent);
-        initDataListener.add(mainBlackListEvent);
-        initDataListener.add(nationListEvent);
-        initDataListener.add(birthdayListEvent);
-        initDataListener.add(addrVecEvent);
-        return initDataListener;
     }
 }

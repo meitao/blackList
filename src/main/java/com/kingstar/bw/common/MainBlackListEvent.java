@@ -38,9 +38,8 @@ public class MainBlackListEvent implements InitDataEvent {
     @Override
     public void onFire() {
 
-        int batchSize = 100000;
-        Map<String, List<Search>> param = new HashMap<String, List<Search>>(6000000);
-        jdbcTemplate.setFetchSize(batchSize);
+        Map<String, Search> param = new HashMap<String,Search>(6000000);
+        jdbcTemplate.setFetchSize(Constant.INIT_FETCH_SIZE);
         long start = System.currentTimeMillis();
         /*
          * 根据名字的字符串长度进行分片，不同的长度在不同的分片上，分片的主节点在list上，长度为list的下标
@@ -52,7 +51,7 @@ public class MainBlackListEvent implements InitDataEvent {
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Search search = new Search();
                 String id = rs.getString("ID");
-                //如果字符串为空,则进行后续的处理
+                //如果字符串为空,则进行后续的处理，该表中id唯一
                 if (StringUtils.isEmpty(id)) {
                     return null;
                 } else {
@@ -69,13 +68,8 @@ public class MainBlackListEvent implements InitDataEvent {
                 if (!StringUtils.isEmpty(addr)) {
                     search.setAddr(addr);
                 }
-                List<Search> searches = param.get(id);
-                if (searches == null) {
-                    searches = new ArrayList<Search>();
-                }
                 //新增或更新name对应的值
-                searches.add(search);
-                param.put(id, searches);
+                param.put(id, search);
                 return null;
             }
         });

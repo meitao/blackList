@@ -32,7 +32,7 @@ public class BirthdayListEvent implements InitDataEvent {
     public void onFire() {
 
         Map<String, List<String>> map = new HashMap<String, List<String>>(100000);
-        jdbcTemplate.setFetchSize(100000);
+        jdbcTemplate.setFetchSize(Constant.INIT_FETCH_SIZE);
         long start = System.currentTimeMillis();
         /*
          * 根据名字的字符串长度进行分片，不同的长度在不同的分片上，分片的主节点在list上，长度为list的下标
@@ -45,14 +45,7 @@ public class BirthdayListEvent implements InitDataEvent {
                 String birthday = rs.getString("PEOPLE_DATE");
                 String id = rs.getString("ID");
 
-                List<String> list = map.get(id);
-                if (list == null) {
-                    list = new ArrayList<String>();
-                } else {
-                    list.add(birthday);
-                }
-                //新增或更新name对应的值
-                map.put(id, list);
+                CommondUtil.storeMap(id,birthday,map);
                 return null;
             }
         });

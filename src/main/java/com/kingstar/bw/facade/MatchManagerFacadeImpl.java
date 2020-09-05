@@ -3,6 +3,7 @@ package com.kingstar.bw.facade;
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
 import com.kingstar.bw.exception.PlatException;
+import com.kingstar.bw.filter.MutilNumberMatchManager;
 import com.kingstar.bw.filter.NameMatchManager;
 import com.kingstar.bw.filter.NumberMatchManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class MatchManagerFacadeImpl implements MatchManagerFacade {
     @Autowired
     NameMatchManager nameMatchManager ;
     @Autowired
-    NumberMatchManager numberMatchManager ;
+    MutilNumberMatchManager numberMatchManager ;
 
 
     @Override

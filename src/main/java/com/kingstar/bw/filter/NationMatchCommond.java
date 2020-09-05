@@ -34,41 +34,40 @@ public class NationMatchCommond extends MatchCommand{
         ChainContext chainContext = this.convert(context);
 
         Search search = chainContext.getSearch();
-        List<Search> tarSearchs = this.getTarget(search.getId());
-
+        List<String> values = this.getValue(search.getId(),Constant.KEY_NATION);
         BigDecimal rate = new BigDecimal(0);
         BigDecimal tarRate = new BigDecimal(0);
-        for (Search tarSearch: tarSearchs){
+        for (String nation: values){
             //当为空,rate为0
-            if (!StringUtils.isEmpty(search.getNumber())) {
+            if (!StringUtils.isEmpty(search.getNation())) {
                 //自然人
                 if (search.isPer()) {
                     //当输入项不为空,黑名单为空为50%
-                    if (StringUtils.isEmpty(tarSearch.getNation())) {
+                    if (StringUtils.isEmpty(nation)) {
                         rate = BigDecimal.valueOf(0.5);
                     }
 
                 } else {
                     //机构
                     //当输入项不等于黑名单0%
-                    if (search.getNation().equals(tarSearch.getNation())) {
+                    if (search.getNation().equals(nation)) {
                         rate = BigDecimal.valueOf(0);
                     }
 
                 }
                 //输入项等于黑名单数据100%
-                if (search.getNation().equals(tarSearch.getNation())) {
+                if (search.getNation().equals(nation)) {
                     rate = BigDecimal.valueOf(1);
                 }
                 //当输入项不等于黑名单-1000%
-                if (search.getNation().equals(tarSearch.getNation())) {
+                if (search.getNation().equals(nation)) {
                     rate = BigDecimal.valueOf(-10);
                 }
             }
             //取id列表中最大匹配的值
             if (tarRate.compareTo(rate)<1||StringUtils.isEmpty(search.getNation())){
                 tarRate = rate;
-                search.setNation(tarSearch.getNation());
+                search.setNation(nation);
             }
         }
 

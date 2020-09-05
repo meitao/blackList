@@ -59,4 +59,22 @@ public class CommondUtil {
         param.put(name, list);
         map.put(len, param);
     }
+
+    /**
+     *  将对于的id值中，将value放入列表中
+     * @param id
+     * @param value
+     * @param map
+     */
+    public static void storeMap(String id,String value ,Map<String ,List<String>> map){
+        List<String> list = map.get(id);
+        if (list == null) {
+            list = new ArrayList<String>();
+        } else {
+            list.add(value);
+        }
+        //新增或更新name对应的值
+        map.put(id, list);
+    }
+
 }

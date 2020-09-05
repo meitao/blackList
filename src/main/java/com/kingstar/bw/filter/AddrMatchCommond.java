@@ -37,37 +37,35 @@ public class AddrMatchCommond extends MatchCommand {
         ChainContext chainContext = this.convert(context);
 
         Search search = chainContext.getSearch();
-        List<Search> tarSearchs = this.getTarget(search.getId());
+        Search tarSearch = this.getTarget(search.getId());
         BigDecimal rate = new BigDecimal(0);
         BigDecimal tarRate = new BigDecimal(0);
-        for (Search tarSearch : tarSearchs) {
 
-            //当为空,rate为0
-            if (!StringUtils.isEmpty(search.getAddr())) {
-                //当黑名单地址为空 50%
-                if (StringUtils.isEmpty(tarSearch.getAddr())) {
-                    rate = BigDecimal.valueOf(0.5);
-                } else {
-                    //输入地址和黑名单地址都不为空,做人工智能匹配
-                    ParagraphVectors vectors = AddrVecEvent.vec;
-                    try {
-                        INDArray arr1 = vectors.inferVector(search.getAddr());
-                        INDArray arr2 = vectors.inferVector(search.getAddr());
-                        //人工智能匹配地址
-                        rate = BigDecimal.valueOf(Transforms.cosineSim(arr1, arr2));
-                    } catch (Exception e) {
-                        throw new PlatException(e);
-                    }
-
+        //当为空,rate为0
+        if (!StringUtils.isEmpty(search.getAddr())) {
+            //当黑名单地址为空 50%
+            if (StringUtils.isEmpty(tarSearch.getAddr())) {
+                rate = BigDecimal.valueOf(0.5);
+            } else {
+                //输入地址和黑名单地址都不为空,做人工智能匹配
+                ParagraphVectors vectors = AddrVecEvent.vec;
+                try {
+                    INDArray arr1 = vectors.inferVector(search.getAddr());
+                    INDArray arr2 = vectors.inferVector(search.getAddr());
+                    //人工智能匹配地址
+                    rate = BigDecimal.valueOf(Transforms.cosineSim(arr1, arr2));
+                } catch (Exception e) {
+                    throw new PlatException(e);
                 }
-            }
 
-            //取id列表中最大匹配的值
-            if (tarRate.compareTo(rate) < 0||StringUtils.isEmpty(search.getAddr())) {
-                tarRate = rate;
-                //将匹配的地址返回
-                search.setAddr(tarSearch.getAddr());
             }
+        }
+
+        //取id列表中最大匹配的值
+        if (tarRate.compareTo(rate) < 0 || StringUtils.isEmpty(search.getAddr())) {
+            tarRate = rate;
+            //将匹配的地址返回
+            search.setAddr(tarSearch.getAddr());
         }
 
         return this.isEnd(chainContext, rate);

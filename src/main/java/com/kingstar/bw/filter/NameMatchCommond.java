@@ -2,6 +2,8 @@ package com.kingstar.bw.filter;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
+import com.kingstar.bw.common.Constant;
+import com.kingstar.bw.common.LocalData;
 import com.kingstar.bw.exception.PlatException;
 import com.kingstar.bw.ml.LevenshteinDistance;
 import org.apache.commons.chain.Context;
@@ -10,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: meitao
@@ -33,21 +36,24 @@ public class NameMatchCommond extends MatchCommand {
 
         Search search = chainContext.getSearch();
 
-        List<Search> tarSearchs = this.getTarget(search.getId());
+        List<String> names = this.getValue(search.getId(),Constant.KEY_NAME_ID);
+
         BigDecimal rate = new BigDecimal(0);
         BigDecimal tarRate = new BigDecimal(0);
-        for (Search tarSearch : tarSearchs) {
+        for (String name : names) {
             //名称匹配度大于等于设置的匹配度
-            rate = LevenshteinDistance.computeLevenshteinDistanceRate(search.getName(), tarSearch.getName());
+            rate = LevenshteinDistance.computeLevenshteinDistanceRate(search.getName(), name);
             //取id列表中最大匹配的值
             if (tarRate.compareTo(rate) < 0||StringUtils.isEmpty(search.getName())) {
                 tarRate = rate;
-                search.setName(tarSearch.getName());
+                search.setName(name);
             }
         }
 
 
         return this.isEnd(chainContext, tarRate);
     }
+
+
 
 }

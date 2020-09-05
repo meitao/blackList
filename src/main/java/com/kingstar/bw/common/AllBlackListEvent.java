@@ -28,7 +28,7 @@ import java.util.concurrent.*;
  * @Date: 20-8-26 上午11:39
  * @Version: 1.0
  */
-@Service
+@Deprecated
 public class AllBlackListEvent implements InitDataEvent {
 
     protected final Log logger = LogFactory.getLog(getClass());

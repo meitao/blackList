@@ -39,25 +39,29 @@ public class NumberListEvent implements InitDataEvent {
     @Override
     public void onFire() {
         Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>(600);
-        jdbcTemplate.setFetchSize(100000);
+        Map<String, List<String>> mapId = new HashMap<String, List<String>>(100000);
+        jdbcTemplate.setFetchSize(Constant.INIT_FETCH_SIZE);
         long start = System.currentTimeMillis();
         jdbcTemplate.query(" SELECT  id,ID_NO FROM AMLCONFIG.T_EXPOSED_PEOPLE_ID ", new RowMapper<String>() {
 //        jdbcTemplate.query(" SELECT  id,ID_NO FROM  T_EXPOSED_PEOPLE_ID ", new RowMapper<String>() {
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    String name = rs.getString("ID_NO");
+                    String idNo = rs.getString("ID_NO");
                     String id = rs.getString("ID");
                     //判断名字的长度获取相应的hash
-                    if (StringUtils.isEmpty(name)) {
+                    if (StringUtils.isEmpty(idNo)) {
                         return null;
                     }
-                CommondUtil.putPatition(name,id,map);
+                CommondUtil.putPatition(idNo,id,map);
+                //以id为key值
+//                CommondUtil.storeMap(id,idNo,mapId);
                 return null;
             }
         });
         long end = System.currentTimeMillis();
         logger.info((end-start)+" number 加载成功!"+map.size());
         LocalData.setCollection(Constant.KEY_NUMBER,map);
+//        LocalData.setCollection(Constant.KEY_NUMBER_ID,mapId);
 
 //        Map<String, String> param = new HashMap<String, String>();
 //        BufferedReader bufferedReader = null;

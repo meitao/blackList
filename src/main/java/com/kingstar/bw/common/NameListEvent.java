@@ -43,9 +43,9 @@ public class NameListEvent implements InitDataEvent {
     @Override
     public void onFire() {
 
-        Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>(600);
-//        Map<String, List<String>> param = new HashMap<String, List<String>>(8000000);
-        jdbcTemplate.setFetchSize(100000);
+        Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>(100000);
+        Map<String, List<String>> mapId = new HashMap<String, List<String>>(1000000);
+        jdbcTemplate.setFetchSize(Constant.INIT_FETCH_SIZE);
 
         long start = System.currentTimeMillis();
 
@@ -64,12 +64,15 @@ public class NameListEvent implements InitDataEvent {
                     return null ;
                 }
                 CommondUtil.putPatition(name,id,map);
+                //以id为key值
+                CommondUtil.storeMap(id,name,mapId);
                 return null;
             }
         });
         long end = System.currentTimeMillis();
-        logger.info((end - start) + " name 加载成功!" + map.size());
+        logger.info((end - start) + "  加载成功!" + map.size());
         LocalData.setCollection(Constant.KEY_NAME, map);
+        LocalData.setCollection(Constant.KEY_NAME_ID, mapId);
 
 //        List<String> taaccountids = jdbcTemplate.query("select sysdate from dual", new RowMapper<String>() {
 //            @Override

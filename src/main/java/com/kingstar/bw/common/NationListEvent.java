@@ -31,8 +31,8 @@ public class NationListEvent implements InitDataEvent {
     @Override
     public void onFire() {
 
-        Map<String, List<String>> map = new HashMap<String, List<String>>(100000);
-        jdbcTemplate.setFetchSize(100000);
+        Map<String, List<String>> map = new HashMap<String, List<String>>(3000000);
+        jdbcTemplate.setFetchSize(Constant.INIT_FETCH_SIZE);
         long start = System.currentTimeMillis();
         /*
          * 根据名字的字符串长度进行分片，不同的长度在不同的分片上，分片的主节点在list上，长度为list的下标
@@ -44,20 +44,13 @@ public class NationListEvent implements InitDataEvent {
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
                 String nation = rs.getString("COUNTRY");
                 String id = rs.getString("ID");
+                CommondUtil.storeMap(id,nation,map);
 
-                List<String> list = map.get(id);
-                if (list == null) {
-                    list = new ArrayList<String>();
-                } else {
-                    list.add(nation);
-                }
-                //新增或更新name对应的值
-                map.put(id, list);
                 return null;
             }
         });
         long end = System.currentTimeMillis();
-        logger.info((end - start) + " name 加载成功!" + map.size());
+        logger.info((end - start) + "  加载成功!" + map.size());
         LocalData.setCollection(Constant.KEY_NATION, map);
     }
 }
