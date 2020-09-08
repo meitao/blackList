@@ -37,7 +37,7 @@ public class NameListEvent implements InitDataEvent {
     private JdbcTemplate jdbcTemplate;
 
 
-//    public static final String FILE_NAME = "/home/meitao/test/xm.csv";
+//    public static final String FILE_DIR = "/home/meitao/test/xm.csv";
 
 
     @Override
@@ -84,7 +84,7 @@ public class NameListEvent implements InitDataEvent {
 
 //        BufferedReader bufferedReader = null;
 //        try {
-//            bufferedReader = new BufferedReader(new FileReader(FILE_NAME));
+//            bufferedReader = new BufferedReader(new FileReader(FILE_DIR));
 //            String line;
 //            int i = 0;
 //            while ((line = bufferedReader.readLine()) != null) {

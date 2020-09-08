@@ -319,7 +319,7 @@ public class AllBlackListEvent implements InitDataEvent {
 //
 //        BufferedReader bufferedReader = null;
 //        try {
-//            bufferedReader = new BufferedReader(new FileReader(FILE_NAME));
+//            bufferedReader = new BufferedReader(new FileReader(FILE_DIR));
 //            String line;
 //            int i = 0;
 //            while ((line = bufferedReader.readLine()) != null) {

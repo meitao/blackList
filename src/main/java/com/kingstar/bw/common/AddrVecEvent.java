@@ -1,6 +1,5 @@
 package com.kingstar.bw.common;
 
-import com.kingstar.bw.exception.PlatException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.deeplearning4j.models.paragraphvectors.ParagraphVectors;
@@ -10,14 +9,14 @@ import org.deeplearning4j.text.sentenceiterator.labelaware.LabelAwareFileSentenc
 import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @Author: meitao
@@ -28,16 +27,55 @@ import java.util.Map;
 @Service
 public class AddrVecEvent implements InitDataEvent {
 
+    public static final String FILE_DIR = "/home/tmp/";
 
-    public static final String FILE_NAME = "C:\\Users\\tao.mei\\work\\blacklist\\addr.csv";
+    public static final String FILE_NAME = "test.csv";
 
     protected final Log logger = LogFactory.getLog(getClass());
 
-    public static  ParagraphVectors vec ;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    public static ParagraphVectors vec;
+
     @Override
     public void onFire() {
+        BufferedWriter bufferedWriter = null;
+        File fileDir = null;
+        try {
+            fileDir = new File(FILE_DIR);
+            if (!fileDir.exists()){
+                fileDir.mkdirs();
+            }
+            bufferedWriter = new BufferedWriter(new FileWriter(FILE_DIR +FILE_NAME));
+
+            BufferedWriter finalBufferedWriter = bufferedWriter;
+            jdbcTemplate.query("SELECT   BIRTHPLACE FROM  AMLCONFIG.T_EXPOSED_PEOPLE_NEW c WHERE c.BIRTHPLACE IS NOT null  group by BIRTHPLACE  ", new RowMapper<String>() {
+
+                @Override
+                public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    try {
+
+                        finalBufferedWriter.write(rs.getString("BIRTHPLACE") + "\n");
+                    } catch (IOException e) {
+                        logger.error("", e);
+                    }
+                    return null;
+                }
+            });
+        } catch (IOException e) {
+            logger.error("", e);
+        }finally {
+            try {
+                if (bufferedWriter!=null){
+                    bufferedWriter.close();
+                }
+            } catch (IOException e) {
+                logger.error("", e);
+            }
+        }
         //输入文本文件的目录
-        File inputTxt = new File(FILE_NAME);
+        File inputTxt = new File(FILE_DIR);
         logger.info("开始加载数据...." + inputTxt.getName());
         //加载数据
         LabelAwareFileSentenceIterator iter = new LabelAwareFileSentenceIterator(inputTxt);
@@ -62,9 +100,13 @@ public class AddrVecEvent implements InitDataEvent {
                 .tokenizerFactory(token)
                 .sampling(0)
                 .build();
-
         vec.fit();
-
-
+        //删除临时文件
+        if(fileDir!=null){
+            File[] files = fileDir.listFiles();
+            for (File file: files){
+                file.delete();
+            }
+        }
     }
 }

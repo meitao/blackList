@@ -9,19 +9,19 @@ package com.kingstar.bw.bean;
 public class Search {
 
     private String id ;
-
+    //名称
     private String name ;
-
+    //国家
     private String nation ;
-
+    //性别
     private String gender;
-
+    //地址
     private String addr;
-
+    //生日
     private String birthDay;
-
+    //证件号
     private String number;
-
+    //是否为个人
     private boolean isPer;
 
 

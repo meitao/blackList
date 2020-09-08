@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * @Author: meitao
- * @Description: ${description}
+ * @Description: 加载证件号数据
  * @Date: 20-8-26 上午11:39
  * @Version: 1.0
  */
@@ -66,7 +66,7 @@ public class NumberListEvent implements InitDataEvent {
 //        Map<String, String> param = new HashMap<String, String>();
 //        BufferedReader bufferedReader = null;
 //        try {
-//            bufferedReader = new BufferedReader(new FileReader(FILE_NAME));
+//            bufferedReader = new BufferedReader(new FileReader(FILE_DIR));
 //            String line;
 //            int i = 0;
 //            while ((line = bufferedReader.readLine()) != null) {
