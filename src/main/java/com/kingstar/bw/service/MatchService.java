@@ -2,6 +2,7 @@ package com.kingstar.bw.service;
 
 import com.kingstar.bw.bean.ChainContext;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -12,5 +13,5 @@ import java.util.List;
  */
 public interface MatchService {
 
-    public void match()  ;
+    public void match(double percision)  ;
 }

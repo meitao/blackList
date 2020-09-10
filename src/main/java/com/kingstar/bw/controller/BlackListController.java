@@ -36,7 +36,7 @@ public class BlackListController {
 
     @RequestMapping(value = {"/underLineMatch"}, method = {RequestMethod.POST}, produces = {"application/json; charset=UTF-8"})
     @ResponseBody
-    public  String  underLineMatch(HttpServletRequest request, HttpServletResponse response) {
+    public  String  underLineMatch(HttpServletRequest request, HttpServletResponse response,double percision) {
         if(!run){
             synchronized (this){
                 if(run){
@@ -47,7 +47,7 @@ public class BlackListController {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    matchService.match();
+                    matchService.match(percision);
                     run = false;
                 }
             },"offline blacklist").start();

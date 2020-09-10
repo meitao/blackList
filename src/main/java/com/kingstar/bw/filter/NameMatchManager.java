@@ -8,6 +8,7 @@ import com.kingstar.bw.ml.LevenshteinDistance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -29,7 +30,7 @@ public class NameMatchManager implements MatchManager {
     private ExecutorService executorService =
             new ThreadPoolExecutor(4, 4,
                     0L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<Runnable>(1000000),new ThreadFactory() {
+                    new LinkedBlockingQueue<Runnable>(1000000), new ThreadFactory() {
                 @Override
                 public Thread newThread(Runnable r) {
                     Thread t = new Thread(r);
@@ -56,10 +57,12 @@ public class NameMatchManager implements MatchManager {
 
         //根据输入的名称长度和
         BigDecimal len = BigDecimal.valueOf(search.getName().length());
+
+        BigDecimal percision = BigDecimal.valueOf(search.getPercision());
         // 进1
-        double min = Math.ceil(Constant.PERCISION.multiply(len).doubleValue());
+        double min = Math.ceil(percision.multiply(len).doubleValue());
         // 退1
-        double max = Math.floor(len.divide(Constant.PERCISION, 2, RoundingMode.HALF_UP).doubleValue());
+        double max = Math.floor(len.divide(percision, 2, RoundingMode.HALF_UP).doubleValue());
 
         //姓名最短编辑距离匹配
         //分片的区间是取的数据 大于精准度*len，小于len/精准度，这样就缩小了匹配的范围，不用做整个表的匹配，因为长度过大或过小都不会在这个精准度之内
@@ -80,7 +83,7 @@ public class NameMatchManager implements MatchManager {
                         //名称匹配度大于等于设置的匹配度
                         BigDecimal matchRate = LevenshteinDistance.computeLevenshteinDistanceRate(search.getName(), entry.getKey());
                         //匹配度大于精准度,根据匹配的结果区分机构或个人
-                        if (matchRate.compareTo(Constant.PERCISION) > -1) {
+                        if (matchRate.compareTo(percision) > -1) {
                             //获取名称相对应的id列表
                             List<String> ids = entry.getValue();
                             for (String id : ids) {
@@ -93,39 +96,60 @@ public class NameMatchManager implements MatchManager {
                                 search1.setPer(search.isPer());
                                 search1.setGender(search.getGender());
                                 search1.setNation(search.getNation());
+                                search1.setPercision(search.getPercision());
                                 //获取id的列表
                                 search1.setId(id);
                                 coChainContext.setSearch(search1);
 
                                 Map<String, Params> paramsMap = coChainContext.getParamList();
                                 Params params = new Params();
-                                params.setWeight(Constant.NAME_NUM_WEIGHT);
-                                params.setRate(matchRate.multiply(Constant.NAME_NUM_WEIGHT));
                                 paramsMap.put("name", params);
+
+                                //增加对证件号的验证
+                                NumberMatchCommond numberMatchCommond = null;
+                                //只对非空项进行判断
+                                if (!StringUtils.isEmpty(search.getNumber())) {
+                                    numberMatchCommond = new NumberMatchCommond();
+                                    Params params2 = new Params();
+                                    params2.setWeight(Constant.NUMBER_WEIGHT);
+                                    numberMatchCommond.setParams(params2);
+                                    //当姓名和证件号都不为空时,权重值均分
+                                    params.setWeight(Constant.NAME_WEIGHT);
+                                    params.setRate(matchRate.multiply(Constant.NAME_WEIGHT));
+                                } else {
+                                    //当只有一项不为空时的权重值
+                                    params.setWeight(Constant.NAME_NUM_WEIGHT);
+                                    params.setRate(matchRate.multiply(Constant.NAME_NUM_WEIGHT));
+                                }
                                 //设置姓名的匹配度到执行连上下文中
                                 coChainContext.setParamList(paramsMap);
                                 coChainContext.getSearch().setName(entry.getKey());
+                                coChainContext.setSumRate(params.getRate());
 
                                 if (search.isPer()) {
                                     //个人按照证件号,姓名(排除项),国家(排除项),出生日期(排除项),地址,处理链
                                     PersonMatchChain personMatchChain = new PersonMatchChain();
-                                    personMatchChain.init();
+                                    personMatchChain.init(coChainContext.getSearch());
+                                    if (numberMatchCommond != null)
+                                        personMatchChain.addCommand(numberMatchCommond);
                                     personMatchChain.execute(coChainContext);
 
                                 } else {
                                     //机构,证件号,国家,地址 处理链
                                     OrgMatchChain orgMatchChain = new OrgMatchChain();
-                                    orgMatchChain.init();
+                                    orgMatchChain.init(coChainContext.getSearch());
+                                    if (numberMatchCommond != null)
+                                        orgMatchChain.addCommand(numberMatchCommond);
                                     orgMatchChain.execute(coChainContext);
-
                                 }
-                                if (coChainContext.getSumRate() != null && coChainContext.getSumRate().compareTo(Constant.PERCISION) > -1) {
+                                if (coChainContext.getSumRate() != null && coChainContext.getSumRate().compareTo(percision) > -1) {
                                     result.add(coChainContext);
                                 }
                             }
                         }
                     } catch (Exception e) {
                         logger.error("匹配错误!", e);
+
                     } finally {
                         countDownLatch.countDown();
                     }

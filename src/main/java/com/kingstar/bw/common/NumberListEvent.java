@@ -28,18 +28,15 @@ import java.util.Map;
 @Service
 public class NumberListEvent implements InitDataEvent {
 
-    public static final String reg = ",";
-
-    public static final String FILE_NAME = "/home/meitao/test/zhengjian.csv";
-
     protected final Log logger = LogFactory.getLog(getClass());
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Override
     public void onFire() {
-        Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>(600);
+        Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>(100000);
         Map<String, List<String>> mapId = new HashMap<String, List<String>>(100000);
+
         jdbcTemplate.setFetchSize(Constant.INIT_FETCH_SIZE);
         long start = System.currentTimeMillis();
         jdbcTemplate.query(" SELECT  id,ID_NO FROM AMLCONFIG.T_EXPOSED_PEOPLE_ID ", new RowMapper<String>() {
@@ -54,14 +51,14 @@ public class NumberListEvent implements InitDataEvent {
                     }
                 CommondUtil.putPatition(idNo,id,map);
                 //以id为key值
-//                CommondUtil.storeMap(id,idNo,mapId);
+                CommondUtil.storeMap(id,idNo,mapId);
                 return null;
             }
         });
         long end = System.currentTimeMillis();
         logger.info((end-start)+" number 加载成功!"+map.size());
         LocalData.setCollection(Constant.KEY_NUMBER,map);
-//        LocalData.setCollection(Constant.KEY_NUMBER_ID,mapId);
+        LocalData.setCollection(Constant.KEY_NUMBER_ID,mapId);
 
 //        Map<String, String> param = new HashMap<String, String>();
 //        BufferedReader bufferedReader = null;

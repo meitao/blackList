@@ -44,7 +44,7 @@ public class NameListEvent implements InitDataEvent {
     public void onFire() {
 
         Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>(100000);
-        Map<String, List<String>> mapId = new HashMap<String, List<String>>(1000000);
+//        Map<String, List<String>> mapId = new HashMap<String, List<String>>(1000000);
         jdbcTemplate.setFetchSize(Constant.INIT_FETCH_SIZE);
 
         long start = System.currentTimeMillis();
@@ -65,52 +65,15 @@ public class NameListEvent implements InitDataEvent {
                 }
                 CommondUtil.putPatition(name,id,map);
                 //以id为key值
-                CommondUtil.storeMap(id,name,mapId);
+//                CommondUtil.storeMap(id,name,mapId);
                 return null;
             }
         });
         long end = System.currentTimeMillis();
         logger.info((end - start) + "  加载成功!" + map.size());
         LocalData.setCollection(Constant.KEY_NAME, map);
-        LocalData.setCollection(Constant.KEY_NAME_ID, mapId);
-
-//        List<String> taaccountids = jdbcTemplate.query("select sysdate from dual", new RowMapper<String>() {
-//            @Override
-//            public String mapRow(ResultSet resultSet, int i) throws SQLException {
-//                return resultSet.getString("sysdate");
-//            }
-//        });
+//        LocalData.setCollection(Constant.KEY_NAME_ID, mapId);
 
 
-//        BufferedReader bufferedReader = null;
-//        try {
-//            bufferedReader = new BufferedReader(new FileReader(FILE_DIR));
-//            String line;
-//            int i = 0;
-//            while ((line = bufferedReader.readLine()) != null) {
-//                //跳过第一行
-//                i++;
-//                if (i == 1) {
-//                    continue;
-//                }
-//                //将数据以逗号分割
-//                String[] words = line.split(reg);
-//                String name = words[1].replaceAll("\"", "");
-//                name = name.replaceAll("·", "");
-//                param.put(words[0], name);
-//            }
-//
-
-//        } catch (IOException e) {
-//            throw new PlatException(e);
-//        } finally {
-//            if (bufferedReader != null) {
-//                try {
-//                    bufferedReader.close();
-//                } catch (IOException e) {
-//                    throw new PlatException(e);
-//                }
-//            }
-//        }
     }
 }

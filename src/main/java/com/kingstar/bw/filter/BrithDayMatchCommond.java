@@ -37,6 +37,10 @@ public class BrithDayMatchCommond extends MatchCommand {
         List<String> values = this.getValue(search.getId(),Constant.KEY_BIRTHDAY);
         BigDecimal rate = new BigDecimal(0);
         BigDecimal tarRate = new BigDecimal(0);
+        //当黑名出生日期为空 50%
+        if (values==null||values.isEmpty()){
+            rate = BigDecimal.valueOf(0.5);
+        }
         for(String value :values  ){
             //当为空,rate为0
             if (!StringUtils.isEmpty(search.getBirthDay())) {

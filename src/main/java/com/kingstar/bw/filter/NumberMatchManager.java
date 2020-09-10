@@ -41,10 +41,12 @@ public class NumberMatchManager implements MatchManager {
         Map<String, Map<String, List<String>>> list = LocalData.getCollection(Constant.KEY_NUMBER);
         //根据输入的名称长度和
         BigDecimal len = BigDecimal.valueOf(search.getNumber().length());
+
+        BigDecimal percision = BigDecimal.valueOf(search.getPercision());
         // 进1
-        double min = Math.ceil(Constant.PERCISION.multiply(len).doubleValue());
+        double min = Math.ceil(percision.multiply(len).doubleValue());
         // 退1
-        double max = Math.floor(len.divide(Constant.PERCISION, 2, RoundingMode.HALF_UP).doubleValue());
+        double max = Math.floor(len.divide(percision, 2, RoundingMode.HALF_UP).doubleValue());
 
         for (int i = (int) min; i <= max; i++) {
             Map<String, List<String>> param = list.get(String.valueOf(i));
@@ -64,7 +66,7 @@ public class NumberMatchManager implements MatchManager {
                 }
 
                 //匹配度大于精准度,根据匹配的结果区分机构或个人
-                if (matchRate.compareTo(Constant.PERCISION) > -1) {
+                if (matchRate.compareTo(percision) > -1) {
                     //获取名称相对应的id列表
                     List<String> ids = entry.getValue();
                     for (String id : ids) {
@@ -97,7 +99,7 @@ public class NumberMatchManager implements MatchManager {
                         if (!StringUtils.isEmpty(search.getName())) {
                             nameMatchCommond = new NameMatchCommond();
                             Params params1 = new Params();
-                            params1.setRate(Constant.PERCISION);
+                            params1.setRate(percision);
                             nameMatchCommond.setParams(params1);
                             //当姓名和证件号都不为空时,权重值均分
                             params1.setWeight(Constant.NAME_WEIGHT);
@@ -115,7 +117,7 @@ public class NumberMatchManager implements MatchManager {
                             PersonMatchChain personMatchChain = new PersonMatchChain();
                             if (nameMatchCommond != null)
                                 personMatchChain.addCommand(nameMatchCommond);
-                            personMatchChain.init();
+                            personMatchChain.init(coChainContext.getSearch());
                             try {
                                 personMatchChain.execute(coChainContext);
                             } catch (Exception e) {
@@ -126,14 +128,14 @@ public class NumberMatchManager implements MatchManager {
                             OrgMatchChain orgMatchChain = new OrgMatchChain();
                             if (nameMatchCommond != null)
                                 orgMatchChain.addCommand(nameMatchCommond);
-                            orgMatchChain.init();
+                            orgMatchChain.init(coChainContext.getSearch());
                             try {
                                 orgMatchChain.execute(coChainContext);
                             } catch (Exception e) {
                                 new PlatException(e);
                             }
                         }
-                        if (coChainContext.getSumRate() != null && coChainContext.getSumRate().compareTo(Constant.PERCISION) > -1) {
+                        if (coChainContext.getSumRate() != null && coChainContext.getSumRate().compareTo(percision) > -1) {
                             result.add(coChainContext);
                         }
                     }

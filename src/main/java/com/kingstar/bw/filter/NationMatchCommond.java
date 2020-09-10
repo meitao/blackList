@@ -36,7 +36,11 @@ public class NationMatchCommond extends MatchCommand{
         Search search = chainContext.getSearch();
         List<String> values = this.getValue(search.getId(),Constant.KEY_NATION);
         BigDecimal rate = new BigDecimal(0);
-        BigDecimal tarRate = new BigDecimal(0);
+        BigDecimal tarRate = new BigDecimal(-10);
+
+        if(values==null||values.isEmpty()){
+            rate = BigDecimal.valueOf(0.5);
+        }
         for (String nation: values){
             //当为空,rate为0
             if (!StringUtils.isEmpty(search.getNation())) {
@@ -60,14 +64,14 @@ public class NationMatchCommond extends MatchCommand{
                     rate = BigDecimal.valueOf(1);
                 }
                 //当输入项不等于黑名单-1000%
-                if (search.getNation().equals(nation)) {
+                if (!search.getNation().equals(nation)) {
                     rate = BigDecimal.valueOf(-10);
                 }
             }
             //取id列表中最大匹配的值
             if (tarRate.compareTo(rate)<1||StringUtils.isEmpty(search.getNation())){
                 tarRate = rate;
-                search.setNation(nation);
+//                search.setNation(nation);
             }
         }
 

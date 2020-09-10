@@ -1,7 +1,9 @@
 package com.kingstar.bw.filter;
 
+import com.kingstar.bw.bean.Search;
 import com.kingstar.bw.common.Constant;
 import org.apache.commons.chain.impl.ChainBase;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author: meitao
@@ -12,22 +14,27 @@ import org.apache.commons.chain.impl.ChainBase;
 public class OrgMatchChain extends ChainBase {
 
     //机构,证件号,国家,地址 处理链
-    public void init() {
+    public void init(Search search) {
 
-        NationMatchCommond nationMatchCommond = new NationMatchCommond();
-        Params params3 = new Params();
-        params3.setRate(Constant.PERCISION);
-        params3.setWeight(Constant.NATION_WEIGHT);
-        nationMatchCommond.setParams(params3);
-        addCommand(nationMatchCommond);
+        if(!StringUtils.isEmpty(search.getNation())){
+            NationMatchCommond nationMatchCommond = new NationMatchCommond();
+            Params params3 = new Params();
+//            params3.setRate(Constant.PERCISION);
+            params3.setWeight(Constant.NATION_WEIGHT);
+            nationMatchCommond.setParams(params3);
+            addCommand(nationMatchCommond);
 
+        }
 
-        AddrMatchCommond addrMatchCommond = new AddrMatchCommond();
-        Params params4 = new Params();
-        params4.setRate(Constant.PERCISION);
-        params4.setWeight(Constant.ADDR_WEIGHT);
-        addrMatchCommond.setParams(params4);
-        addCommand(addrMatchCommond);
+        if(!StringUtils.isEmpty(search.getAddr())){
+            AddrMatchCommond addrMatchCommond = new AddrMatchCommond();
+            Params params4 = new Params();
+//            params4.setRate(Constant.PERCISION);
+            params4.setWeight(Constant.ADDR_WEIGHT);
+            addrMatchCommond.setParams(params4);
+            addCommand(addrMatchCommond);
+        }
+
 
     }
 }

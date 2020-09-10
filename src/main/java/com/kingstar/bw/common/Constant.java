@@ -19,7 +19,7 @@ public class Constant {
     public static final String KEY_ALL = "ALL";
 
     //精准度 现设置为固定值,可做配置化
-    public static final BigDecimal PERCISION = new BigDecimal("0.8");
+//    public static final BigDecimal PERCISION = new BigDecimal("0.8");
     //黑名单中为空时的匹配度
     public static final BigDecimal LISTISNULL_PERCISION = new BigDecimal("0.5");
 

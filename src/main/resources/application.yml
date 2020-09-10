@@ -1,11 +1,19 @@
 server:
   port: 8090
+  tomcat:
+    uri-encoding: GBK
 spring:
   datasource:
     driver-class-name: oracle.jdbc.driver.OracleDriver
     url: jdbc:oracle:thin:@10.243.140.63:1521:wolfdb
     username: wolf
     password: wolf
+  http:
+    encoding:
+      force: true
+      charset: GBK
+      enabled: true
+
 #    url: jdbc:oracle:thin:@10.253.2.113:49161:XE
 #    username: system
 #    password: oracle

@@ -31,8 +31,11 @@ public class GenderMatchCommond extends MatchCommand {
         Search search = chainContext.getSearch();
         Search tarSearch = this.getTarget(search.getId());
         BigDecimal rate = new BigDecimal(0);
-        BigDecimal tarRate = new BigDecimal(0);
-
+        BigDecimal tarRate = new BigDecimal(-10);
+        //当黑名单证件号为空 50%
+        if (tarSearch == null) {
+            rate = BigDecimal.valueOf(0.5);
+        }
         //当为空,rate为0
         if (!StringUtils.isEmpty(search.getGender())) {
             //当黑名单证件号为空 50%

@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -38,7 +39,7 @@ public class MatchServiceImpl implements MatchService {
     int count = 0;
 
     @Override
-    public void match() {
+    public void match(double percision) {
         jdbcTemplate.setFetchSize(10000);
         count = 0;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
@@ -73,6 +74,7 @@ public class MatchServiceImpl implements MatchService {
                 search.setGender(gender);
                 search.setBirthDay(birthday);
                 search.setNation(nation);
+                search.setPercision(percision);
                 ChainContext chainContext = new ChainContext();
                 chainContext.setSearch(search);
                 try {

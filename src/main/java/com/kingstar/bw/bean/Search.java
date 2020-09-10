@@ -23,7 +23,8 @@ public class Search {
     private String number;
     //是否为个人
     private boolean isPer;
-
+    //精确度
+    private double  percision;
 
     public String getId() {
         return id;
@@ -93,5 +94,13 @@ public class Search {
 
     public void setPer(boolean per) {
         isPer = per;
+    }
+
+    public double getPercision() {
+        return percision;
+    }
+
+    public void setPercision(double percision) {
+        this.percision = percision;
     }
 }

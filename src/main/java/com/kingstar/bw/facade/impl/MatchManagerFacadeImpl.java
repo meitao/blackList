@@ -1,8 +1,9 @@
-package com.kingstar.bw.facade;
+package com.kingstar.bw.facade.impl;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
 import com.kingstar.bw.exception.PlatException;
+import com.kingstar.bw.facade.MatchManagerFacade;
 import com.kingstar.bw.filter.MutilNumberMatchManager;
 import com.kingstar.bw.filter.NameMatchManager;
 import com.kingstar.bw.filter.NumberMatchManager;
@@ -22,9 +23,9 @@ import java.util.List;
 public class MatchManagerFacadeImpl implements MatchManagerFacade {
 
     @Autowired
-    NameMatchManager nameMatchManager ;
+    NameMatchManager nameMatchManager;
     @Autowired
-    MutilNumberMatchManager numberMatchManager ;
+    MutilNumberMatchManager numberMatchManager;
 
 
     @Override
@@ -35,12 +36,15 @@ public class MatchManagerFacadeImpl implements MatchManagerFacade {
         if (StringUtils.isEmpty(search.getNumber()) && StringUtils.isEmpty(search.getName())) {
             throw new PlatException("名称和证件号码都为空!");
         }
-        List<ChainContext> list ;
-        if (!StringUtils.isEmpty(search.getNumber())){
-            list =   numberMatchManager.match(chainContext);
+        if (search.getPercision() == 0) {
+            throw new PlatException("精确度不能为空!");
+        }
+        List<ChainContext> list;
+        if (!StringUtils.isEmpty(search.getName())) {
 
-        }else{
             list = nameMatchManager.match(chainContext);
+        } else {
+            list = numberMatchManager.match(chainContext);
         }
         return list;
     }

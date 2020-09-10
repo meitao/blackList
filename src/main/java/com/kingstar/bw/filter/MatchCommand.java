@@ -74,9 +74,9 @@ public abstract class MatchCommand implements Command {
         //黑名单中的目标对象
         Search search = allParm.get(id);
 
-        if(search==null){
-            throw new PlatException("黑名单中没有"+id+"对应的数据!");
-        }
+//        if(search==null){
+////            throw new PlatException("黑名单中没有"+id+"对应的数据!");
+////        }
 
         return search;
     }
@@ -98,7 +98,7 @@ public abstract class MatchCommand implements Command {
         chainContext.setParamList(paramsMap);
         //计算加权值
         MathUtil.rateSum(chainContext);
-        if (chainContext.getSumRate().compareTo(this.getParams().getRate())<0){
+        if (chainContext.getSumRate().compareTo(BigDecimal.valueOf(chainContext.getSearch().getPercision()))<0){
             //中断执行链操作返回结果
             return true;
         }
