@@ -48,7 +48,7 @@ public class MutilNumberMatchManager implements MatchManager {
         List<ChainContext> result = new ArrayList<ChainContext>();
         //当名称和证件号码都有,先匹配证件号,优先过滤数据多的,两项都存在的权重值和只有一项的权重值不一样
         //获取内存数据库中的证件信息
-        Map<String, Map<String, List<String>>> list = LocalData.getCollection(Constant.KEY_NUMBER);
+        Map<String, Map<String, List<String>>> list = LocalData.getCollection(Constant.KEY_NUMBER_PER);
         //根据输入的名称长度和
         BigDecimal len = BigDecimal.valueOf(search.getNumber().length());
 
@@ -101,17 +101,15 @@ public class MutilNumberMatchManager implements MatchManager {
 
                                     Map<String, Params> paramsMap = coChainContext.getParamList();
                                     Params params = new Params();
+                                    //当只有一项不为空时的权重值
+                                    params.setWeight(Constant.NAME_NUM_WEIGHT);
+                                    params.setRate(matchRate.multiply(Constant.NAME_NUM_WEIGHT));
                                     //当名单为空时
                                     paramsMap.put("number", params);
                                     //设置匹配度结果到执行连上下文中
                                     coChainContext.setParamList(paramsMap);
                                     coChainContext.setSumRate(params.getRate());
                                     coChainContext.getSearch().setNumber(entry.getKey());
-
-                                    //当只有一项不为空时的权重值
-                                    params.setWeight(Constant.NAME_NUM_WEIGHT);
-                                    params.setRate(matchRate.multiply(Constant.NAME_NUM_WEIGHT));
-
                                     if (search.isPer()) {
                                         //个人按照证件号,姓名(排除项),国家(排除项),出生日期(排除项),地址,处理链
                                         PersonMatchChain personMatchChain = new PersonMatchChain();

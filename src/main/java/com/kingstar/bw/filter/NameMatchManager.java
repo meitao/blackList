@@ -46,12 +46,18 @@ public class NameMatchManager implements MatchManager {
      * @return
      */
     @Override
+
     public List<ChainContext> match(ChainContext chainContext) {
 
         Search search = chainContext.getSearch();
         //当证件号没有,匹配姓名
         //获取内存数据库中的名称信息
-        Map<String, Map<String, List<String>>> map = LocalData.getCollection(Constant.KEY_NAME);
+        Map<String, Map<String, List<String>>> map = null;
+        if(search.isPer()){
+            map = LocalData.getCollection(Constant.KEY_NAME_PER);
+        }else{
+            map = LocalData.getCollection(Constant.KEY_NAME_ENTITY);
+        }
         //保存返回结果
         List<ChainContext> result = new CopyOnWriteArrayList<ChainContext>();
 

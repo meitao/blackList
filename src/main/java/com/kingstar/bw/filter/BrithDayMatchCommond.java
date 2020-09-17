@@ -36,7 +36,7 @@ public class BrithDayMatchCommond extends MatchCommand {
         Search search = chainContext.getSearch();
         List<String> values = this.getValue(search.getId(),Constant.KEY_BIRTHDAY);
         BigDecimal rate = new BigDecimal(0);
-        BigDecimal tarRate = new BigDecimal(0);
+        BigDecimal tarRate = new BigDecimal(-100);
         //当黑名出生日期为空 50%
         if (values==null||values.isEmpty()){
             rate = BigDecimal.valueOf(0.5);
@@ -49,10 +49,13 @@ public class BrithDayMatchCommond extends MatchCommand {
                     rate = BigDecimal.valueOf(0.5);
                 } else {
                     //计算最短路径除以两字符的最短长度,d（src,tar）/min(src,tar)
-                    int distance = LevenshteinDistance.computeLevenshteinDistance_Optimized(search.getBirthDay(), value);
                     int min = Math.min(search.getBirthDay().length(), value.length());
+                    int distance = LevenshteinDistance.computeLevenshteinDistance_Optimized(search.getBirthDay().substring(0,min), value.substring(0,min));
                     BigDecimal result = new BigDecimal(min - distance);
-                    result.divide(BigDecimal.valueOf(min), 2, RoundingMode.HALF_UP);
+                    rate = result.divide(BigDecimal.valueOf(min), 2, RoundingMode.HALF_UP);
+                    if(rate.compareTo(Constant.BRITHDAY_PP05)<0){
+                        rate = BigDecimal.valueOf(-100);
+                    }
                 }
             }
             //将匹配的生日日期返回

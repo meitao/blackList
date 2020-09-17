@@ -8,7 +8,6 @@ import com.kingstar.bw.service.MatchService;
 import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sun.misc.Unsafe;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +23,7 @@ public class BlackListController {
     //是否正在离线处理，离线处理未结束不重复操作,false 为不在匹配，true 为在匹配中
     private  volatile boolean run = false;
 
-    @RequestMapping(value = {"/match"}, method = {RequestMethod.POST}, produces = {"application/json; charset=UTF-8"})
+    @RequestMapping(value = {"/match"}, method = {RequestMethod.POST}, produces = {"application/json; charset=GBK"})
     @ResponseBody
     public  String  match(HttpServletRequest request, HttpServletResponse response, @RequestBody Search search) {
         ChainContext chainContext = new ChainContext();
@@ -34,7 +33,7 @@ public class BlackListController {
         return JSONArray.toJSONString(list);
     }
 
-    @RequestMapping(value = {"/underLineMatch"}, method = {RequestMethod.POST}, produces = {"application/json; charset=UTF-8"})
+    @RequestMapping(value = {"/underLineMatch"}, method = {RequestMethod.POST}, produces = {"application/json; charset=GBK"})
     @ResponseBody
     public  String  underLineMatch(HttpServletRequest request, HttpServletResponse response,double percision) {
         if(!run){
@@ -44,12 +43,9 @@ public class BlackListController {
                 }
                 run = true;
             }
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+            new Thread(()-> {
                     matchService.match(percision);
                     run = false;
-                }
             },"offline blacklist").start();
         }else{
             return "正在进行离线匹配!";

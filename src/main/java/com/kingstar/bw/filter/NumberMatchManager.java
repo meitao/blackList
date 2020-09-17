@@ -38,7 +38,12 @@ public class NumberMatchManager implements MatchManager {
         List<ChainContext> result = new ArrayList<ChainContext>();
         //当名称和证件号码都有,先匹配证件号,优先过滤数据多的,两项都存在的权重值和只有一项的权重值不一样
         //获取内存数据库中的证件信息
-        Map<String, Map<String, List<String>>> list = LocalData.getCollection(Constant.KEY_NUMBER);
+        Map<String, Map<String, List<String>>> map = null;
+        if(search.isPer()){
+            map = LocalData.getCollection(Constant.KEY_NUMBER_PER);
+        }else{
+            map = LocalData.getCollection(Constant.KEY_NUMBER_ENTITY);
+        }
         //根据输入的名称长度和
         BigDecimal len = BigDecimal.valueOf(search.getNumber().length());
 
@@ -49,7 +54,7 @@ public class NumberMatchManager implements MatchManager {
         double max = Math.floor(len.divide(percision, 2, RoundingMode.HALF_UP).doubleValue());
 
         for (int i = (int) min; i <= max; i++) {
-            Map<String, List<String>> param = list.get(String.valueOf(i));
+            Map<String, List<String>> param = map.get(String.valueOf(i));
             if (param == null) {
                 continue;
             }

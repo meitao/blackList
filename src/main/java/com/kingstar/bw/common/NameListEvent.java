@@ -1,6 +1,5 @@
 package com.kingstar.bw.common;
 
-import com.kingstar.bw.exception.PlatException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +8,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +38,8 @@ public class NameListEvent implements InitDataEvent {
     @Override
     public void onFire() {
 
-        Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>(100000);
+        Map<String, Map<String, List<String>>> mapEntity = new HashMap<String, Map<String, List<String>>>(1000);
+        Map<String, Map<String, List<String>>> mapPer = new HashMap<String, Map<String, List<String>>>(1000);
 //        Map<String, List<String>> mapId = new HashMap<String, List<String>>(1000000);
         jdbcTemplate.setFetchSize(Constant.INIT_FETCH_SIZE);
 
@@ -54,26 +50,49 @@ public class NameListEvent implements InitDataEvent {
          * @todo在根据个人和机构分成两个list
          *
          */
-        jdbcTemplate.query("SELECT  id, NAME FROM AMLCONFIG.T_EXPOSED_PEOPLE_NAME ", new RowMapper<String>() {
+        jdbcTemplate.query("SELECT  id, NAME FROM AMLCONFIG.T_EXPOSED_PEOPLE_NAME  WHERE ENTITY_TYPE='Person' ", new RowMapper<String>() {
 //        jdbcTemplate.query("SELECT  id, NAME FROM T_EXPOSED_PEOPLE_NAME ", new RowMapper<String>() {
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-                String name = rs.getString("NAME");
-                String id = rs.getString("ID");
-                if (StringUtils.isEmpty(name)) {
-                    return null ;
-                }
-                CommondUtil.putPatition(name,id,map);
+                initData(rs,mapPer);
                 //以id为key值
 //                CommondUtil.storeMap(id,name,mapId);
                 return null;
             }
         });
+
+        jdbcTemplate.query("SELECT  id, NAME FROM AMLCONFIG.T_EXPOSED_PEOPLE_NAME  WHERE ENTITY_TYPE='Entity' ", new RowMapper<String>() {
+            //        jdbcTemplate.query("SELECT  id, NAME FROM T_EXPOSED_PEOPLE_NAME ", new RowMapper<String>() {
+            @Override
+            public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+                initData(rs,mapEntity);
+                //以id为key值
+//                CommondUtil.storeMap(id,name,mapId);
+                return null;
+            }
+        });
+
+
+
         long end = System.currentTimeMillis();
-        logger.info((end - start) + "  加载成功!" + map.size());
-        LocalData.setCollection(Constant.KEY_NAME, map);
+        logger.info((end - start) + "  加载成功!" + mapPer.size());
+        LocalData.setCollection(Constant.KEY_NAME_PER, mapPer);
+        LocalData.setCollection(Constant.KEY_NAME_ENTITY, mapEntity);
 //        LocalData.setCollection(Constant.KEY_NAME_ID, mapId);
 
+    }
 
+    /**
+     * 初始化参数
+     * @param rs
+     * @param param
+     */
+    private void initData(ResultSet rs,Map param) throws SQLException {
+        String name = rs.getString("NAME");
+        String id = rs.getString("ID");
+        if (StringUtils.isEmpty(name)) {
+            return   ;
+        }
+        CommondUtil.putPatition(name,id,param);
     }
 }

@@ -1,6 +1,5 @@
 package com.kingstar.bw.common;
 
-import com.kingstar.bw.exception.PlatException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +8,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,62 +29,51 @@ public class NumberListEvent implements InitDataEvent {
     private JdbcTemplate jdbcTemplate;
     @Override
     public void onFire() {
-        Map<String, Map<String, List<String>>> map = new HashMap<String, Map<String, List<String>>>(100000);
+        Map<String, Map<String, List<String>>> mapPer = new HashMap<String, Map<String, List<String>>>(1000);
+        Map<String, Map<String, List<String>>> mapEntity = new HashMap<String, Map<String, List<String>>>(1000);
         Map<String, List<String>> mapId = new HashMap<String, List<String>>(100000);
 
         jdbcTemplate.setFetchSize(Constant.INIT_FETCH_SIZE);
         long start = System.currentTimeMillis();
-        jdbcTemplate.query(" SELECT  id,ID_NO FROM AMLCONFIG.T_EXPOSED_PEOPLE_ID ", new RowMapper<String>() {
-//        jdbcTemplate.query(" SELECT  id,ID_NO FROM  T_EXPOSED_PEOPLE_ID ", new RowMapper<String>() {
+        //加载个人的证件数据
+        jdbcTemplate.query(" SELECT  id,ID_NO FROM AMLCONFIG.T_EXPOSED_PEOPLE_ID  WHERE ENTITY_TYPE='Person'  ", new RowMapper<String>() {
+            //        jdbcTemplate.query(" SELECT  id,ID_NO FROM  T_EXPOSED_PEOPLE_ID ", new RowMapper<String>() {
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    String idNo = rs.getString("ID_NO");
-                    String id = rs.getString("ID");
-                    //判断名字的长度获取相应的hash
-                    if (StringUtils.isEmpty(idNo)) {
-                        return null;
-                    }
-                CommondUtil.putPatition(idNo,id,map);
-                //以id为key值
-                CommondUtil.storeMap(id,idNo,mapId);
+                initData(  rs,  mapPer,  mapId);
                 return null;
             }
         });
+        //加载机构的证件数据
+        jdbcTemplate.query(" SELECT  id,ID_NO FROM AMLCONFIG.T_EXPOSED_PEOPLE_ID   WHERE ENTITY_TYPE='Entity'", new RowMapper<String>() {
+            //        jdbcTemplate.query(" SELECT  id,ID_NO FROM  T_EXPOSED_PEOPLE_ID ", new RowMapper<String>() {
+            @Override
+            public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+                initData(  rs,  mapEntity,  mapId);
+                return null;
+            }
+        });
+
         long end = System.currentTimeMillis();
-        logger.info((end-start)+" number 加载成功!"+map.size());
-        LocalData.setCollection(Constant.KEY_NUMBER,map);
+        logger.info((end-start)+" number 加载成功!"+mapPer.size());
+        LocalData.setCollection(Constant.KEY_NUMBER_PER,mapPer);
+        LocalData.setCollection(Constant.KEY_NUMBER_ENTITY,mapEntity);
         LocalData.setCollection(Constant.KEY_NUMBER_ID,mapId);
-
-//        Map<String, String> param = new HashMap<String, String>();
-//        BufferedReader bufferedReader = null;
-//        try {
-//            bufferedReader = new BufferedReader(new FileReader(FILE_DIR));
-//            String line;
-//            int i = 0;
-//            while ((line = bufferedReader.readLine()) != null) {
-//                //跳过第一行
-//                i++;
-//                if (i == 1) {
-//                    continue;
-//                }
-//                //将数据以逗号分割
-//                String[] words = line.split(reg);
-//                String name =  words[1].replaceAll("·", "");
-//                param.put(words[0], name);
-//            }
-//            LocalData.setCollection(Constant.KEY_NUMBER,param);
-//        } catch (IOException e) {
-//            throw new PlatException(e);
-//        } finally {
-//            if (bufferedReader != null) {
-//                try {
-//                    bufferedReader.close();
-//                } catch (IOException e) {
-//                    throw new PlatException(e);
-//                }
-//            }
-//        }
-
-
+    }
+    /**
+     * 初始化参数
+     * @param rs
+     * @param param
+     */
+    private void initData(ResultSet rs,Map param,Map mapId) throws SQLException {
+        String idNo = rs.getString("ID_NO");
+        String id = rs.getString("ID");
+        //判断名字的长度获取相应的hash
+        if (StringUtils.isEmpty(idNo)) {
+            return  ;
+        }
+        CommondUtil.putPatition(idNo,id,param);
+        //以id为key值
+        CommondUtil.storeMap(id,idNo,mapId);
     }
 }

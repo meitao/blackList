@@ -200,7 +200,12 @@
         </dependency>
 
         <!--ml end-->
-
+        <!-- 中文简体繁体转换-->
+        <dependency>
+            <groupId>com.luhuiguo</groupId>
+            <artifactId>chinese-utils</artifactId>
+            <version>1.0</version>
+        </dependency>
 
     </dependencies>
     <build>

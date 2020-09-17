@@ -2,11 +2,13 @@ package com.kingstar.bw.facade.impl;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
+import com.kingstar.bw.common.ChineseUtil;
 import com.kingstar.bw.exception.PlatException;
 import com.kingstar.bw.facade.MatchManagerFacade;
 import com.kingstar.bw.filter.MutilNumberMatchManager;
 import com.kingstar.bw.filter.NameMatchManager;
 import com.kingstar.bw.filter.NumberMatchManager;
+import com.luhuiguo.chinese.ChineseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -37,12 +39,30 @@ public class MatchManagerFacadeImpl implements MatchManagerFacade {
             throw new PlatException("名称和证件号码都为空!");
         }
         if (search.getPercision() == 0) {
-            throw new PlatException("精确度不能为空!");
+            //设置默认精确度为精准
+            search.setPercision(0.9);
+//            throw new PlatException("精确度不能为空!");
         }
         List<ChainContext> list;
         if (!StringUtils.isEmpty(search.getName())) {
+            //中文
+            if (ChineseUtil.isChinese(search.getName())) {
+                //简体字的校验
+                String name = ChineseUtils.toSimplified(search.getName());
+                search.setName(name);
+                list = nameMatchManager.match(chainContext);
+                if (!list.isEmpty()){
+                    return list;
+                }
+                //繁体字的校验
+                 name = ChineseUtils.toTraditional(search.getName());
+                search.setName(name);
+                list = nameMatchManager.match(chainContext);
+            }else{
+                //非中文
+                list = nameMatchManager.match(chainContext);
+            }
 
-            list = nameMatchManager.match(chainContext);
         } else {
             list = numberMatchManager.match(chainContext);
         }
