@@ -34,7 +34,7 @@ public class GenderMatchCommond extends MatchCommand {
         BigDecimal tarRate = new BigDecimal(-10);
         //当黑名单证件号为空 50%
         if (tarSearch == null) {
-            rate = BigDecimal.valueOf(0.5);
+            tarRate = BigDecimal.valueOf(0.5);
         }
         //当为空,rate为0
         if (!StringUtils.isEmpty(search.getGender())) {
@@ -56,6 +56,6 @@ public class GenderMatchCommond extends MatchCommand {
             search.setGender(tarSearch.getGender());
         }
         //证件号匹配度大于等于设置的匹配度
-        return this.isEnd(chainContext, rate);
+        return this.isEnd(chainContext, tarRate);
     }
 }

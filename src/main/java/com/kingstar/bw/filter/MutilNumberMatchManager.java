@@ -149,6 +149,10 @@ public class MutilNumberMatchManager implements MatchManager {
                 logger.error(e);
             }
         }
+        //根据匹配度降序排序
+        if(!result.isEmpty()){
+            result.sort(Comparator.comparing(ChainContext::getSumRate).reversed());
+        }
         return result;
 
     }

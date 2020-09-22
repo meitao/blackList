@@ -1,4 +1,4 @@
-package com.kingstar.bw.common;
+package com.kingstar.bw.util;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.exception.PlatException;

@@ -135,17 +135,17 @@ public class NameMatchManager implements MatchManager {
                                 if (search.isPer()) {
                                     //个人按照证件号,姓名(排除项),国家(排除项),出生日期(排除项),地址,处理链
                                     PersonMatchChain personMatchChain = new PersonMatchChain();
-                                    personMatchChain.init(coChainContext.getSearch());
                                     if (numberMatchCommond != null)
                                         personMatchChain.addCommand(numberMatchCommond);
+                                    personMatchChain.init(coChainContext.getSearch());
                                     personMatchChain.execute(coChainContext);
 
                                 } else {
                                     //机构,证件号,国家,地址 处理链
                                     OrgMatchChain orgMatchChain = new OrgMatchChain();
-                                    orgMatchChain.init(coChainContext.getSearch());
                                     if (numberMatchCommond != null)
                                         orgMatchChain.addCommand(numberMatchCommond);
+                                    orgMatchChain.init(coChainContext.getSearch());
                                     orgMatchChain.execute(coChainContext);
                                 }
                                 if (coChainContext.getSumRate() != null && coChainContext.getSumRate().compareTo(percision) > -1) {
@@ -169,7 +169,10 @@ public class NameMatchManager implements MatchManager {
                 logger.error(e);
             }
         }
-
+        //根据匹配度降序排序
+        if(!result.isEmpty()){
+            result.sort(Comparator.comparing(ChainContext::getSumRate).reversed());
+        }
         return result;
 
     }

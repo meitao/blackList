@@ -117,7 +117,8 @@ public class LevenshteinDistance {
     public static BigDecimal computeLevenshteinDistanceRate(CharSequence src, CharSequence dst) {
         int distance = computeLevenshteinDistance_Optimized(src, dst);
         int max = Math.max(src.length(), dst.length());
-        BigDecimal result = new BigDecimal(max - distance);
-        return result.divide(BigDecimal.valueOf(max), 2, RoundingMode.HALF_UP);
+        BigDecimal result = new BigDecimal(distance).divide(new BigDecimal(max),2,BigDecimal.ROUND_HALF_UP);
+        return new BigDecimal("1").subtract(result);
+
     }
 }

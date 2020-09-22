@@ -1,8 +1,6 @@
 package com.kingstar.bw.util;
 
-import com.kingstar.bw.common.ChineseUtil;
 import com.luhuiguo.chinese.ChineseUtils;
-import com.luhuiguo.chinese.pinyin.Pinyin;
 import org.junit.Test;
 
 public class ChineseTest {

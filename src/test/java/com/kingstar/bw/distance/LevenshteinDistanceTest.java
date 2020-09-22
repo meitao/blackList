@@ -20,7 +20,7 @@ public class LevenshteinDistanceTest {
 
     @Test
     public void test1() {
-        BigDecimal big  = LevenshteinDistance.computeLevenshteinDistanceRate("张三","陈国荣");
+        BigDecimal big  = LevenshteinDistance.computeLevenshteinDistanceRate("工商银行","华泰商业银行");
         System.out.println(big);
     }
 

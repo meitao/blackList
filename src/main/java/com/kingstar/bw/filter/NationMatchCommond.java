@@ -20,10 +20,11 @@ import java.util.Map;
  * @Version: 1.0
  */
 @Service
-public class NationMatchCommond extends MatchCommand{
+public class NationMatchCommond extends MatchCommand {
 
     /**
      * 匹配国家,返回大于等于精准度的
+     *
      * @param context
      * @return
      * @throws Exception
@@ -34,47 +35,51 @@ public class NationMatchCommond extends MatchCommand{
         ChainContext chainContext = this.convert(context);
 
         Search search = chainContext.getSearch();
-        List<String> values = this.getValue(search.getId(),Constant.KEY_NATION);
+        List<String> values = this.getValue(search.getId(), Constant.KEY_NATION);
         BigDecimal rate = new BigDecimal(0);
         BigDecimal tarRate = new BigDecimal(-10);
+        String returnNation = "";
+        if (values == null || values.isEmpty()) {
+            tarRate = BigDecimal.valueOf(0.5);
+        } else {
+            for (String nation : values) {
+                //当为空,rate为0
+                if (!StringUtils.isEmpty(search.getNation())) {
+                    //自然人
+                    if (search.isPer()) {
+                        //当输入项不为空,黑名单为空为50%
+                        if (StringUtils.isEmpty(nation)) {
+                            rate = BigDecimal.valueOf(0.5);
+                        }
 
-        if(values==null||values.isEmpty()){
-            rate = BigDecimal.valueOf(0.5);
-        }
-        for (String nation: values){
-            //当为空,rate为0
-            if (!StringUtils.isEmpty(search.getNation())) {
-                //自然人
-                if (search.isPer()) {
-                    //当输入项不为空,黑名单为空为50%
-                    if (StringUtils.isEmpty(nation)) {
-                        rate = BigDecimal.valueOf(0.5);
+                    } else {
+                        //机构
+                        //当输入项不等于黑名单0%
+                        if (search.getNation().equals(nation)) {
+                            rate = BigDecimal.valueOf(0);
+                        }
+
                     }
-
-                } else {
-                    //机构
-                    //当输入项不等于黑名单0%
+                    //输入项等于黑名单数据100%
                     if (search.getNation().equals(nation)) {
-                        rate = BigDecimal.valueOf(0);
+                        rate = BigDecimal.valueOf(1);
                     }
-
+                    //当输入项不等于黑名单-1000%
+                    if (!search.getNation().equals(nation)) {
+                        rate = BigDecimal.valueOf(-10);
+                    }
                 }
-                //输入项等于黑名单数据100%
-                if (search.getNation().equals(nation)) {
-                    rate = BigDecimal.valueOf(1);
-                }
-                //当输入项不等于黑名单-1000%
-                if (!search.getNation().equals(nation)) {
-                    rate = BigDecimal.valueOf(-10);
-                }
-            }
-            //取id列表中最大匹配的值
-            if (tarRate.compareTo(rate)<1||StringUtils.isEmpty(search.getNation())){
-                tarRate = rate;
+                //取id列表中最大匹配的值
+                if (tarRate.compareTo(rate) < 1 || StringUtils.isEmpty(search.getNation())) {
+                    tarRate = rate;
 //                search.setNation(nation);
+                    returnNation = nation;
+                }
             }
         }
 
+
+        search.setNation(returnNation);
         //证件号匹配度大于等于设置的匹配度
         return this.isEnd(chainContext, tarRate);
     }

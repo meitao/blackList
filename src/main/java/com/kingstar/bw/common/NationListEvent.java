@@ -1,16 +1,15 @@
 package com.kingstar.bw.common;
 
+import com.kingstar.bw.util.CommondUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +38,7 @@ public class NationListEvent implements InitDataEvent {
          * @todo在根据个人和机构分成两个list
          *
          */
-        jdbcTemplate.query("SELECT  id, COUNTRY FROM  AMLCONFIG.T_EXPOSED_PEOPLE_COUNTRY c  ", new RowMapper<String>() {
+        jdbcTemplate.query("SELECT  id, COUNTRY FROM  AMLCONFIG.T_EXPOSED_PEOPLE_COUNTRY c where c.COUNTRY_TYPE = 'Citizenship' ", new RowMapper<String>() {
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
                 String nation = rs.getString("COUNTRY");
@@ -50,7 +49,7 @@ public class NationListEvent implements InitDataEvent {
             }
         });
         long end = System.currentTimeMillis();
-        logger.info((end - start) + "  加载成功!" + map.size());
+        logger.info((end - start) + " nation 加载成功!" + map.size());
         LocalData.setCollection(Constant.KEY_NATION, map);
     }
 }

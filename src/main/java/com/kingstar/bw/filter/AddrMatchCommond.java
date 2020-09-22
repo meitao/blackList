@@ -5,6 +5,8 @@ import com.kingstar.bw.bean.Search;
 import com.kingstar.bw.common.AddrVecEvent;
 import com.kingstar.bw.exception.PlatException;
 import org.apache.commons.chain.Context;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.deeplearning4j.models.paragraphvectors.ParagraphVectors;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.ops.transforms.Transforms;
@@ -23,7 +25,7 @@ import java.util.List;
 @Service
 public class AddrMatchCommond extends MatchCommand {
 
-
+    protected final Log logger = LogFactory.getLog(getClass());
     /**
      * 地址匹配
      *
@@ -42,7 +44,7 @@ public class AddrMatchCommond extends MatchCommand {
         BigDecimal tarRate = new BigDecimal(0);
         //当黑名单地址为空 50%
         if (tarSearch==null) {
-            rate = BigDecimal.valueOf(0.5);
+            tarRate = BigDecimal.valueOf(0.5);
         }else{
             //当为空,rate为0
             if (!StringUtils.isEmpty(search.getAddr())) {
@@ -54,11 +56,12 @@ public class AddrMatchCommond extends MatchCommand {
                     ParagraphVectors vectors = AddrVecEvent.vec;
                     try {
                         INDArray arr1 = vectors.inferVector(search.getAddr());
-                        INDArray arr2 = vectors.inferVector(search.getAddr());
+                        INDArray arr2 = vectors.inferVector(tarSearch.getAddr());
                         //人工智能匹配地址
                         rate = BigDecimal.valueOf(Transforms.cosineSim(arr1, arr2));
                     } catch (Exception e) {
-                        throw new PlatException(e);
+                        logger.info(e);
+                        search.setAddr("");
                     }
 
                 }
@@ -71,6 +74,6 @@ public class AddrMatchCommond extends MatchCommand {
                 search.setAddr(tarSearch.getAddr());
             }
         }
-        return this.isEnd(chainContext, rate);
+        return this.isEnd(chainContext, tarRate);
     }
 }

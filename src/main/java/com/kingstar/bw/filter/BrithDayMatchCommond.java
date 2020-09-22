@@ -37,34 +37,40 @@ public class BrithDayMatchCommond extends MatchCommand {
         List<String> values = this.getValue(search.getId(),Constant.KEY_BIRTHDAY);
         BigDecimal rate = new BigDecimal(0);
         BigDecimal tarRate = new BigDecimal(-100);
+        String returnBir = "";
         //当黑名出生日期为空 50%
         if (values==null||values.isEmpty()){
-            rate = BigDecimal.valueOf(0.5);
-        }
-        for(String value :values  ){
-            //当为空,rate为0
-            if (!StringUtils.isEmpty(search.getBirthDay())) {
-                //当黑名出生日期为空 50%
-                if (StringUtils.isEmpty(value)) {
-                    rate = BigDecimal.valueOf(0.5);
-                } else {
-                    //计算最短路径除以两字符的最短长度,d（src,tar）/min(src,tar)
-                    int min = Math.min(search.getBirthDay().length(), value.length());
-                    int distance = LevenshteinDistance.computeLevenshteinDistance_Optimized(search.getBirthDay().substring(0,min), value.substring(0,min));
-                    BigDecimal result = new BigDecimal(min - distance);
-                    rate = result.divide(BigDecimal.valueOf(min), 2, RoundingMode.HALF_UP);
-                    if(rate.compareTo(Constant.BRITHDAY_PP05)<0){
-                        rate = BigDecimal.valueOf(-100);
+            tarRate = BigDecimal.valueOf(0.5);
+        }else{
+            for(String value :values  ){
+                //当为空,rate为0
+                if (!StringUtils.isEmpty(search.getBirthDay())) {
+                    //当黑名出生日期为空 50%
+                    if (StringUtils.isEmpty(value)) {
+                        rate = BigDecimal.valueOf(0.5);
+                    } else {
+                        //计算最短路径除以两字符的最短长度,d（src,tar）/min(src,tar)
+                        int min = Math.min(search.getBirthDay().length(), value.length());
+                        int distance = LevenshteinDistance.computeLevenshteinDistance_Optimized(search.getBirthDay().substring(0,min), value.substring(0,min));
+                        BigDecimal result = new BigDecimal(min - distance);
+                        rate = result.divide(BigDecimal.valueOf(min), 2, RoundingMode.HALF_UP);
+                        if(rate.compareTo(Constant.BRITHDAY_PP05)<0){
+                            rate = BigDecimal.valueOf(-100);
+                        }
                     }
                 }
-            }
-            //将匹配的生日日期返回
-            //取id列表中最大匹配的值
-            if (tarRate.compareTo(rate)<0||StringUtils.isEmpty(search.getBirthDay())){
-                tarRate = rate;
-                search.setBirthDay(value);
+                //将匹配的生日日期返回
+                //取id列表中最大匹配的值
+                if (tarRate.compareTo(rate)<0||StringUtils.isEmpty(search.getBirthDay())){
+                    tarRate = rate;
+//                search.setBirthDay(value);
+                    returnBir = value;
+                }
             }
         }
+
+
+        search.setBirthDay(returnBir);
         return this.isEnd(chainContext, tarRate);
     }
 

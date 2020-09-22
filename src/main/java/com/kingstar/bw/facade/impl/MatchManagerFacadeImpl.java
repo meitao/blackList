@@ -2,12 +2,11 @@ package com.kingstar.bw.facade.impl;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
-import com.kingstar.bw.common.ChineseUtil;
+import com.kingstar.bw.util.ChineseUtil;
 import com.kingstar.bw.exception.PlatException;
 import com.kingstar.bw.facade.MatchManagerFacade;
 import com.kingstar.bw.filter.MutilNumberMatchManager;
 import com.kingstar.bw.filter.NameMatchManager;
-import com.kingstar.bw.filter.NumberMatchManager;
 import com.luhuiguo.chinese.ChineseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

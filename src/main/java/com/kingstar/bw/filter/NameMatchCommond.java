@@ -40,16 +40,17 @@ public class NameMatchCommond extends MatchCommand {
 
         BigDecimal rate = new BigDecimal(0);
         BigDecimal tarRate = new BigDecimal(0);
+        String returnName = "";
         for (String name : names) {
             //名称匹配度大于等于设置的匹配度
             rate = LevenshteinDistance.computeLevenshteinDistanceRate(search.getName(), name);
             //取id列表中最大匹配的值
             if (tarRate.compareTo(rate) < 0||StringUtils.isEmpty(search.getName())) {
                 tarRate = rate;
-                search.setName(name);
+                returnName = name;
             }
         }
-
+        search.setName(returnName);
 
         return this.isEnd(chainContext, tarRate);
     }

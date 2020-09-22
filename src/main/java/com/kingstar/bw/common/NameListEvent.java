@@ -1,5 +1,6 @@
 package com.kingstar.bw.common;
 
+import com.kingstar.bw.util.CommondUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @Author: meitao
@@ -51,10 +53,10 @@ public class NameListEvent implements InitDataEvent {
          *
          */
         jdbcTemplate.query("SELECT  id, NAME FROM AMLCONFIG.T_EXPOSED_PEOPLE_NAME  WHERE ENTITY_TYPE='Person' ", new RowMapper<String>() {
-//        jdbcTemplate.query("SELECT  id, NAME FROM T_EXPOSED_PEOPLE_NAME ", new RowMapper<String>() {
+            //        jdbcTemplate.query("SELECT  id, NAME FROM T_EXPOSED_PEOPLE_NAME ", new RowMapper<String>() {
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-                initData(rs,mapPer);
+                initData(rs, mapPer);
                 //以id为key值
 //                CommondUtil.storeMap(id,name,mapId);
                 return null;
@@ -65,7 +67,7 @@ public class NameListEvent implements InitDataEvent {
             //        jdbcTemplate.query("SELECT  id, NAME FROM T_EXPOSED_PEOPLE_NAME ", new RowMapper<String>() {
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-                initData(rs,mapEntity);
+                initData(rs, mapEntity);
                 //以id为key值
 //                CommondUtil.storeMap(id,name,mapId);
                 return null;
@@ -73,9 +75,19 @@ public class NameListEvent implements InitDataEvent {
         });
 
 
-
         long end = System.currentTimeMillis();
-        logger.info((end - start) + "  加载成功!" + mapPer.size());
+        //记录不同长度的名称数量
+        Set<Map.Entry<String, Map<String, List<String>>>> set = mapPer.entrySet();
+        for (Map.Entry<String, Map<String, List<String>>> entry : set) {
+            logger.info("长度为"+entry.getKey()+"的个人名称数量:" + entry.getValue().size());
+        }
+
+        Set<Map.Entry<String, Map<String, List<String>>>> setEntity = mapEntity.entrySet();
+        for (Map.Entry<String, Map<String, List<String>>> entry : setEntity) {
+            logger.info("长度为"+entry.getKey()+"的机构名称数量:" + entry.getValue().size());
+        }
+
+        logger.info((end - start) + " name  加载成功!" + mapPer.size());
         LocalData.setCollection(Constant.KEY_NAME_PER, mapPer);
         LocalData.setCollection(Constant.KEY_NAME_ENTITY, mapEntity);
 //        LocalData.setCollection(Constant.KEY_NAME_ID, mapId);
@@ -84,15 +96,16 @@ public class NameListEvent implements InitDataEvent {
 
     /**
      * 初始化参数
+     *
      * @param rs
      * @param param
      */
-    private void initData(ResultSet rs,Map param) throws SQLException {
+    private void initData(ResultSet rs, Map param) throws SQLException {
         String name = rs.getString("NAME");
         String id = rs.getString("ID");
         if (StringUtils.isEmpty(name)) {
-            return   ;
+            return;
         }
-        CommondUtil.putPatition(name,id,param);
+        CommondUtil.putPatition(name, id, param);
     }
 }

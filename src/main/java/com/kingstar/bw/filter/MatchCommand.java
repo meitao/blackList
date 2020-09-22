@@ -4,7 +4,7 @@ import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
 import com.kingstar.bw.common.Constant;
 import com.kingstar.bw.common.LocalData;
-import com.kingstar.bw.common.MathUtil;
+import com.kingstar.bw.util.MathUtil;
 import com.kingstar.bw.exception.PlatException;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -122,9 +122,9 @@ public abstract class MatchCommand implements Command {
         //黑名单中的目标对象
         List<String> tars = allParm.get(id);
 
-        if(tars==null){
-            throw new PlatException("黑名单中没有"+id+"对应的数据!");
-        }
+//        if(tars==null){
+//            throw new PlatException("黑名单中没有"+id+"对应的数据!");
+//        }
 
         return tars;
     }
