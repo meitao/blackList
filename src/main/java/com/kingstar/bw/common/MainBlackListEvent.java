@@ -46,7 +46,7 @@ public class MainBlackListEvent implements InitDataEvent {
          * @todo在根据个人和机构分成两个list
          *
          */
-        jdbcTemplate.query("SELECT  id,GENDER, BIRTHPLACE FROM  AMLCONFIG.T_EXPOSED_PEOPLE_NEW c  ", new RowMapper<String>() {
+        jdbcTemplate.query("SELECT  id,GENDER FROM  AMLCONFIG.T_EXPOSED_PEOPLE_NEW c  ", new RowMapper<String>() {
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Search search = new Search();
@@ -64,10 +64,10 @@ public class MainBlackListEvent implements InitDataEvent {
                     search.setGender(gender);
                 }
 
-                String addr = rs.getString("BIRTHPLACE");
-                if (!StringUtils.isEmpty(addr)) {
-                    search.setAddr(addr);
-                }
+//                String addr = rs.getString("BIRTHPLACE");
+//                if (!StringUtils.isEmpty(addr)) {
+//                    search.setAddr(addr);
+//                }
                 //新增或更新name对应的值
                 param.put(id, search);
                 return null;

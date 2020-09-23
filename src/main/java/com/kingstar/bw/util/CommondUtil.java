@@ -70,9 +70,9 @@ public class CommondUtil {
         List<String> list = map.get(id);
         if (list == null) {
             list = new ArrayList<String>();
-        } else {
-            list.add(value);
         }
+        list.add(value);
+
         //新增或更新name对应的值
         map.put(id, list);
     }

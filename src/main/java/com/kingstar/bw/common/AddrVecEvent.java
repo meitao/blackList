@@ -1,5 +1,6 @@
 package com.kingstar.bw.common;
 
+import com.kingstar.bw.util.CommondUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.deeplearning4j.models.paragraphvectors.ParagraphVectors;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: meitao
@@ -40,6 +44,7 @@ public class AddrVecEvent implements InitDataEvent {
 
     @Override
     public void onFire() {
+        Map<String, List<String>> map = new HashMap<String, List<String>>(100000);
         BufferedWriter bufferedWriter = null;
         File fileDir = null;
         try {
@@ -50,13 +55,17 @@ public class AddrVecEvent implements InitDataEvent {
             bufferedWriter = new BufferedWriter(new FileWriter(FILE_DIR +FILE_NAME));
 
             BufferedWriter finalBufferedWriter = bufferedWriter;
-            jdbcTemplate.query("SELECT   BIRTHPLACE FROM  AMLCONFIG.T_EXPOSED_PEOPLE_NEW c WHERE c.BIRTHPLACE IS NOT null  group by BIRTHPLACE  ", new RowMapper<String>() {
+            jdbcTemplate.query("SELECT  ID, ADDRESS FROM  AMLCONFIG.T_EXPOSED_PEOPLE_ADDRESS c WHERE c.ADDRESS IS NOT null  group by ID, ADDRESS  ", new RowMapper<String>() {
 
                 @Override
                 public String mapRow(ResultSet rs, int rowNum) throws SQLException {
                     try {
+                       String address = rs.getString("ADDRESS");
+                        String id = rs.getString("ID");
 
-                        finalBufferedWriter.write(rs.getString("BIRTHPLACE") + "\n");
+                        CommondUtil.storeMap(id,address,map);
+
+                        finalBufferedWriter.write(rs.getString("ADDRESS") + "\n");
                     } catch (IOException e) {
                         logger.error("", e);
                     }
@@ -74,6 +83,9 @@ public class AddrVecEvent implements InitDataEvent {
                 logger.error("", e);
             }
         }
+        //地址存入缓存中
+        LocalData.setCollection(Constant.KEY_ADDR, map);
+
         //输入文本文件的目录
         File inputTxt = new File(FILE_DIR);
         logger.info("开始加载数据...." + inputTxt.getName());
@@ -88,12 +100,13 @@ public class AddrVecEvent implements InitDataEvent {
         //设置文档标签
         logger.info("训练模型....");
         vec = new ParagraphVectors.Builder()
+                .seed(1)
                 .minWordFrequency(1)
                 .iterations(5)
                 .epochs(1)
                 .layerSize(50)
-                .learningRate(0.025)
-                .windowSize(5)
+                .learningRate(0.01)
+                .windowSize(10)
                 .iterate(iter)
                 .trainWordVectors(false)
                 .vocabCache(cache)

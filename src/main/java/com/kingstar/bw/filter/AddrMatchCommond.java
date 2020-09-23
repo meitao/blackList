@@ -3,6 +3,7 @@ package com.kingstar.bw.filter;
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
 import com.kingstar.bw.common.AddrVecEvent;
+import com.kingstar.bw.common.Constant;
 import com.kingstar.bw.exception.PlatException;
 import org.apache.commons.chain.Context;
 import org.apache.commons.logging.Log;
@@ -39,41 +40,47 @@ public class AddrMatchCommond extends MatchCommand {
         ChainContext chainContext = this.convert(context);
 
         Search search = chainContext.getSearch();
-        Search tarSearch = this.getTarget(search.getId());
+//        Search tarSearch = this.getTarget(search.getId());
+        List<String> values = this.getValue(search.getId(),Constant.KEY_ADDR);
         BigDecimal rate = new BigDecimal(0);
         BigDecimal tarRate = new BigDecimal(0);
+        String returnAdd = "";
         //当黑名单地址为空 50%
-        if (tarSearch==null) {
+        if (values==null||values.isEmpty()){
             tarRate = BigDecimal.valueOf(0.5);
         }else{
-            //当为空,rate为0
-            if (!StringUtils.isEmpty(search.getAddr())) {
-                //当黑名单地址为空 50%
-                if (StringUtils.isEmpty(tarSearch.getAddr())) {
-                    rate = BigDecimal.valueOf(0.5);
-                } else {
-                    //输入地址和黑名单地址都不为空,做人工智能匹配
-                    ParagraphVectors vectors = AddrVecEvent.vec;
-                    try {
-                        INDArray arr1 = vectors.inferVector(search.getAddr());
-                        INDArray arr2 = vectors.inferVector(tarSearch.getAddr());
-                        //人工智能匹配地址
-                        rate = BigDecimal.valueOf(Transforms.cosineSim(arr1, arr2));
-                    } catch (Exception e) {
-                        logger.info(e);
-                        search.setAddr("");
-                    }
+            for(String value :values  ){
+                //当为空,rate为0
+                if (!StringUtils.isEmpty(search.getAddr())) {
+                    //当黑名单地址为空 50%
+                    if (StringUtils.isEmpty(value)) {
+                        rate = BigDecimal.valueOf(0.5);
+                    } else {
+                        //输入地址和黑名单地址都不为空,做人工智能匹配
+                        ParagraphVectors vectors = AddrVecEvent.vec;
+                        try {
+                            INDArray arr1 = vectors.inferVector(search.getAddr());
+                            INDArray arr2 = vectors.inferVector(value);
+                            //人工智能匹配地址
+                            rate = BigDecimal.valueOf(Transforms.cosineSim(arr1, arr2));
+                        } catch (Exception e) {
+                            logger.info(e);
+                            search.setAddr("");
+                        }
 
+                    }
+                }
+
+                //取id列表中最大匹配的值
+                if (tarRate.compareTo(rate) < 0 || StringUtils.isEmpty(search.getAddr())) {
+                    tarRate = rate;
+                    //将匹配的地址返回
+                    returnAdd = value;
                 }
             }
 
-            //取id列表中最大匹配的值
-            if (tarRate.compareTo(rate) < 0 || StringUtils.isEmpty(search.getAddr())) {
-                tarRate = rate;
-                //将匹配的地址返回
-                search.setAddr(tarSearch.getAddr());
-            }
         }
+        search.setAddr(returnAdd);
         return this.isEnd(chainContext, tarRate);
     }
 }
