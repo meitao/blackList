@@ -1,5 +1,7 @@
-package com.kingstar.bw.common;
+package com.kingstar.bw.event;
 
+import com.kingstar.bw.common.Constant;
+import com.kingstar.bw.common.LocalData;
 import com.kingstar.bw.util.CommondUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,13 +33,11 @@ public class NationListEvent implements InitDataEvent {
     public void onFire() {
 
         Map<String, List<String>> map = new HashMap<String, List<String>>(3000000);
+
+        Map<String,String> shortMap = new HashMap<String,String>(800);
         jdbcTemplate.setFetchSize(Constant.INIT_FETCH_SIZE);
         long start = System.currentTimeMillis();
-        /*
-         * 根据名字的字符串长度进行分片，不同的长度在不同的分片上，分片的主节点在list上，长度为list的下标
-         * @todo在根据个人和机构分成两个list
-         *
-         */
+
         jdbcTemplate.query("SELECT  id, COUNTRY FROM  AMLCONFIG.T_EXPOSED_PEOPLE_COUNTRY c where c.COUNTRY_TYPE = 'Citizenship' ", new RowMapper<String>() {
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -48,8 +48,21 @@ public class NationListEvent implements InitDataEvent {
                 return null;
             }
         });
+        //加载国家简称对应表
+        jdbcTemplate.query("SELECT EN_NAME, CN_NAME, SHORT_NAME FROM AMLDATA.T_COUNTRY_NAME ", new RowMapper<String>() {
+            @Override
+            public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+                String enName = rs.getString("EN_NAME").toUpperCase();
+                String cnName = rs.getString("CN_NAME");
+                String shortName = rs.getString("SHORT_NAME").toUpperCase();
+                shortMap.put(enName,shortName);
+                shortMap.put(cnName,shortName);
+                return null;
+            }
+        });
         long end = System.currentTimeMillis();
         logger.info((end - start) + " nation 加载成功!" + map.size());
         LocalData.setCollection(Constant.KEY_NATION, map);
+        LocalData.setCollection(Constant.KEY_SORT_NATION, shortMap);
     }
 }

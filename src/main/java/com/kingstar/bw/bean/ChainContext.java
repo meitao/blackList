@@ -1,6 +1,5 @@
 package com.kingstar.bw.bean;
 
-import com.kingstar.bw.filter.Params;
 import org.apache.commons.chain.impl.ContextBase;
 
 import java.math.BigDecimal;

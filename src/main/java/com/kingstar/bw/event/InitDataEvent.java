@@ -1,4 +1,4 @@
-package com.kingstar.bw.common;
+package com.kingstar.bw.event;
 
 /**
  * @Author: meitao

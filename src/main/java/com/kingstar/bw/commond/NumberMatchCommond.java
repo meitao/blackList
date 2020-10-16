@@ -1,4 +1,4 @@
-package com.kingstar.bw.filter;
+package com.kingstar.bw.commond;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
@@ -11,10 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @Author: meitao
@@ -61,6 +59,11 @@ public class NumberMatchCommond extends MatchCommand {
         search.setNumber(retrunNumber);
         //证件号匹配度大于等于设置的匹配度
         return this.isEnd(chainContext, tarRate);
+    }
+
+    @Override
+    public String getDisplay() {
+        return Constant.DS_NUMBER;
     }
 
     /**

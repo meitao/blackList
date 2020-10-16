@@ -1,9 +1,10 @@
-package com.kingstar.bw.filter;
+package com.kingstar.bw.commond;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
 import com.kingstar.bw.common.Constant;
 import com.kingstar.bw.common.LocalData;
+import com.kingstar.bw.bean.Params;
 import com.kingstar.bw.util.MathUtil;
 import com.kingstar.bw.exception.PlatException;
 import org.apache.commons.chain.Command;
@@ -26,8 +27,7 @@ public abstract class MatchCommand implements Command {
     /**
      * 系统参数
      */
-    private  Params params = new Params();
-
+    private Params params = new Params();
 
     public Params getParams() {
         return params;
@@ -36,6 +36,12 @@ public abstract class MatchCommand implements Command {
     public void setParams(Params params) {
         this.params = params;
     }
+
+    /**
+     * 前端界面展示的字段
+     * @return
+     */
+    public abstract String getDisplay();
 
     /**
      * 将对象转换
@@ -94,7 +100,7 @@ public abstract class MatchCommand implements Command {
         params.setWeight(this.getParams().getWeight());
         params.setRate(matchRate.multiply(this.getParams().getWeight()));
 
-        paramsMap.put(this.getClass().getSimpleName(),params);
+        paramsMap.put(this.getDisplay(),params);
         chainContext.setParamList(paramsMap);
         //计算加权值
         MathUtil.rateSum(chainContext);

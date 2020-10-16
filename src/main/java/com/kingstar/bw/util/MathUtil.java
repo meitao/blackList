@@ -2,7 +2,7 @@ package com.kingstar.bw.util;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.exception.PlatException;
-import com.kingstar.bw.filter.Params;
+import com.kingstar.bw.bean.Params;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

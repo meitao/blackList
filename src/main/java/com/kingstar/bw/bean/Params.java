@@ -1,4 +1,4 @@
-package com.kingstar.bw.filter;
+package com.kingstar.bw.bean;
 
 import java.math.BigDecimal;
 

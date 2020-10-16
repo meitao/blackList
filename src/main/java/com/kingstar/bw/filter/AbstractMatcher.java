@@ -1,9 +1,8 @@
 package com.kingstar.bw.filter;
 
-import com.kingstar.bw.bean.Search;
+import com.kingstar.bw.bean.Param;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * @Author: meitao
@@ -11,7 +10,7 @@ import java.util.List;
  * @Date: 20-8-26 下午2:56
  * @Version: 1.0
  */
-public abstract class AbstractMatcher implements Matcher ,Param{
+public abstract class AbstractMatcher implements Matcher ,Param {
 
     //匹配度
     private BigDecimal rate ;

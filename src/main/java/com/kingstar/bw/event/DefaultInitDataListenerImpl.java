@@ -1,4 +1,4 @@
-package com.kingstar.bw.common;
+package com.kingstar.bw.event;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

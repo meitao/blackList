@@ -1,9 +1,11 @@
 package com.kingstar.bw.filter;
 
 import com.kingstar.bw.bean.ChainContext;
+import com.kingstar.bw.bean.Params;
 import com.kingstar.bw.bean.Search;
 import com.kingstar.bw.common.Constant;
 import com.kingstar.bw.common.LocalData;
+import com.kingstar.bw.commond.NumberMatchCommond;
 import com.kingstar.bw.ml.LevenshteinDistance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,9 +55,9 @@ public class NameMatchManager implements MatchManager {
         //当证件号没有,匹配姓名
         //获取内存数据库中的名称信息
         Map<String, Map<String, List<String>>> map = null;
-        if(search.isPer()){
+        if (search.isPer()) {
             map = LocalData.getCollection(Constant.KEY_NAME_PER);
-        }else{
+        } else {
             map = LocalData.getCollection(Constant.KEY_NAME_ENTITY);
         }
         //保存返回结果
@@ -109,7 +111,7 @@ public class NameMatchManager implements MatchManager {
 
                                 Map<String, Params> paramsMap = coChainContext.getParamList();
                                 Params params = new Params();
-                                paramsMap.put("name", params);
+                                paramsMap.put(Constant.DS_NAME, params);
 
                                 //增加对证件号的验证
                                 NumberMatchCommond numberMatchCommond = null;
@@ -170,7 +172,7 @@ public class NameMatchManager implements MatchManager {
             }
         }
         //根据匹配度降序排序
-        if(!result.isEmpty()){
+        if (!result.isEmpty()) {
             result.sort(Comparator.comparing(ChainContext::getSumRate).reversed());
         }
         return result;

@@ -1,5 +1,7 @@
-package com.kingstar.bw.common;
+package com.kingstar.bw.event;
 
+import com.kingstar.bw.common.Constant;
+import com.kingstar.bw.common.LocalData;
 import com.kingstar.bw.util.CommondUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -70,9 +72,12 @@ public class NumberListEvent implements InitDataEvent {
         String idNo = rs.getString("ID_NO");
         String id = rs.getString("ID");
         //判断名字的长度获取相应的hash
-        if (StringUtils.isEmpty(idNo)) {
+        if (!StringUtils.hasText(idNo)) {
             return  ;
         }
+        //去掉证件号中的空格
+        idNo = idNo.replaceAll(" ","");
+
         CommondUtil.putPatition(idNo,id,param);
         //以id为key值
         CommondUtil.storeMap(id,idNo,mapId);

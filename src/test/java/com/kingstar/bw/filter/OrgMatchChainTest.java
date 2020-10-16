@@ -1,7 +1,9 @@
 package com.kingstar.bw.filter;
 
 import com.kingstar.bw.bean.ChainContext;
+import com.kingstar.bw.bean.Params;
 import com.kingstar.bw.bean.Search;
+import com.kingstar.bw.commond.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.BeforeClass;

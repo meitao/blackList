@@ -1,5 +1,8 @@
-package com.kingstar.bw.common;
+package com.kingstar.bw.event;
 
+import com.kingstar.bw.common.Constant;
+import com.kingstar.bw.common.LocalData;
+import com.kingstar.bw.util.AddrUtil;
 import com.kingstar.bw.util.CommondUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,7 +65,9 @@ public class AddrVecEvent implements InitDataEvent {
                     try {
                        String address = rs.getString("ADDRESS");
                         String id = rs.getString("ID");
-
+                        //去除无用词
+                        address = AddrUtil.unuseWord(address);
+                        //去掉地址停用词 city、road、area、district、village、St.和No.
                         CommondUtil.storeMap(id,address,map);
 
                         finalBufferedWriter.write(rs.getString("ADDRESS") + "\n");

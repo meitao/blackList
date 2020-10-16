@@ -1,17 +1,13 @@
-package com.kingstar.bw.filter;
+package com.kingstar.bw.commond;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
 import com.kingstar.bw.common.Constant;
-import com.kingstar.bw.common.LocalData;
 import org.apache.commons.chain.Context;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author: meitao
@@ -57,5 +53,10 @@ public class GenderMatchCommond extends MatchCommand {
         }
         //证件号匹配度大于等于设置的匹配度
         return this.isEnd(chainContext, tarRate);
+    }
+
+    @Override
+    public String getDisplay() {
+        return Constant.DS_GENDER;
     }
 }

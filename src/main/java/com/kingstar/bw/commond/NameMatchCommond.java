@@ -1,10 +1,8 @@
-package com.kingstar.bw.filter;
+package com.kingstar.bw.commond;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
 import com.kingstar.bw.common.Constant;
-import com.kingstar.bw.common.LocalData;
-import com.kingstar.bw.exception.PlatException;
 import com.kingstar.bw.ml.LevenshteinDistance;
 import org.apache.commons.chain.Context;
 import org.springframework.stereotype.Service;
@@ -12,7 +10,6 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author: meitao
@@ -56,5 +53,8 @@ public class NameMatchCommond extends MatchCommand {
     }
 
 
-
+    @Override
+    public String getDisplay() {
+      return Constant.DS_NAME;
+    }
 }

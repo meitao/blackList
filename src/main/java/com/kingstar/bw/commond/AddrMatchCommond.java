@@ -1,10 +1,10 @@
-package com.kingstar.bw.filter;
+package com.kingstar.bw.commond;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
-import com.kingstar.bw.common.AddrVecEvent;
+import com.kingstar.bw.event.AddrVecEvent;
 import com.kingstar.bw.common.Constant;
-import com.kingstar.bw.exception.PlatException;
+import com.kingstar.bw.util.AddrUtil;
 import org.apache.commons.chain.Context;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +27,7 @@ import java.util.List;
 public class AddrMatchCommond extends MatchCommand {
 
     protected final Log logger = LogFactory.getLog(getClass());
+
     /**
      * 地址匹配
      *
@@ -52,6 +53,8 @@ public class AddrMatchCommond extends MatchCommand {
             for(String value :values  ){
                 //当为空,rate为0
                 if (!StringUtils.isEmpty(search.getAddr())) {
+                    //地址去除无用词
+                    search.setAddr(AddrUtil.unuseWord(search.getAddr()));
                     //当黑名单地址为空 50%
                     if (StringUtils.isEmpty(value)) {
                         rate = BigDecimal.valueOf(0.5);
@@ -82,5 +85,10 @@ public class AddrMatchCommond extends MatchCommand {
         }
         search.setAddr(returnAdd);
         return this.isEnd(chainContext, tarRate);
+    }
+
+    @Override
+    public String getDisplay() {
+        return Constant.DS_ADDR;
     }
 }

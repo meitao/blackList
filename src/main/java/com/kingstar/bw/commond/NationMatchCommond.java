@@ -1,4 +1,4 @@
-package com.kingstar.bw.filter;
+package com.kingstar.bw.commond;
 
 import com.kingstar.bw.bean.ChainContext;
 import com.kingstar.bw.bean.Search;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +35,13 @@ public class NationMatchCommond extends MatchCommand {
 
         Search search = chainContext.getSearch();
         List<String> values = this.getValue(search.getId(), Constant.KEY_NATION);
+        //国家按照国家表中找到相应的简称
+       Map<String,String> param = LocalData.getCollection(Constant.KEY_SORT_NATION);
+       //转大写匹配
+       String shortName = param.get(search.getNation().toUpperCase());
+        //没有找到直接匹配
+        search.setNation(shortName==null?search.getNation():shortName);
+
         BigDecimal rate = new BigDecimal(0);
         BigDecimal tarRate = new BigDecimal(-10);
         String returnNation = "";
@@ -82,5 +88,10 @@ public class NationMatchCommond extends MatchCommand {
         search.setNation(returnNation);
         //证件号匹配度大于等于设置的匹配度
         return this.isEnd(chainContext, tarRate);
+    }
+
+    @Override
+    public String getDisplay() {
+        return Constant.DS_NATION;
     }
 }

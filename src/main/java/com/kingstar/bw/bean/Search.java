@@ -23,6 +23,8 @@ public class Search {
     private String number;
     //是否为个人
     private boolean isPer;
+    //是否为拼音
+    private boolean isPinYin;
     //精确度
     private double  percision;
 
@@ -102,5 +104,13 @@ public class Search {
 
     public void setPercision(double percision) {
         this.percision = percision;
+    }
+
+    public boolean isPinYin() {
+        return isPinYin;
+    }
+
+    public void setPinYin(boolean pinYin) {
+        isPinYin = pinYin;
     }
 }

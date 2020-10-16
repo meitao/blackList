@@ -1,5 +1,7 @@
-package com.kingstar.bw.common;
+package com.kingstar.bw.event;
 
+import com.kingstar.bw.common.Constant;
+import com.kingstar.bw.common.LocalData;
 import com.kingstar.bw.util.CommondUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,7 +45,6 @@ public class BirthdayListEvent implements InitDataEvent {
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
                 String birthday = rs.getString("PEOPLE_DATE");
                 String id = rs.getString("ID");
-
                 CommondUtil.storeMap(id,birthday,map);
                 return null;
             }

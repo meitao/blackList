@@ -1,6 +1,7 @@
 package com.kingstar.bw.filter;
 
 import com.kingstar.bw.bean.ChainContext;
+import com.kingstar.bw.bean.Params;
 import com.kingstar.bw.bean.Search;
 import com.kingstar.bw.common.Constant;
 import com.kingstar.bw.common.LocalData;
@@ -105,7 +106,7 @@ public class MutilNumberMatchManager implements MatchManager {
                                     params.setWeight(Constant.NAME_NUM_WEIGHT);
                                     params.setRate(matchRate.multiply(Constant.NAME_NUM_WEIGHT));
                                     //当名单为空时
-                                    paramsMap.put("number", params);
+                                    paramsMap.put(Constant.DS_NUMBER, params);
                                     //设置匹配度结果到执行连上下文中
                                     coChainContext.setParamList(paramsMap);
                                     coChainContext.setSumRate(params.getRate());

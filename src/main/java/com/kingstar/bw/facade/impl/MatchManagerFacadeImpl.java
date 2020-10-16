@@ -44,20 +44,39 @@ public class MatchManagerFacadeImpl implements MatchManagerFacade {
         }
         List<ChainContext> list;
         if (!StringUtils.isEmpty(search.getName())) {
+            //去掉空格
+            search.setName(search.getName().replaceAll(" ", ""));
             //中文
             if (ChineseUtil.isChinese(search.getName())) {
                 //简体字的校验
                 String name = ChineseUtils.toSimplified(search.getName());
                 search.setName(name);
                 list = nameMatchManager.match(chainContext);
-                if (!list.isEmpty()){
+                if (!list.isEmpty()) {
                     return list;
                 }
                 //繁体字的校验
-                 name = ChineseUtils.toTraditional(search.getName());
+                name = ChineseUtils.toTraditional(search.getName());
                 search.setName(name);
                 list = nameMatchManager.match(chainContext);
-            }else{
+
+                if (!list.isEmpty()) {
+                    return list;
+                }
+
+                //中文转拼音
+                if (search.isPinYin()) {
+                    List<String> result = ChineseUtil.toPingyin(name);
+                    for (String n1 : result) {
+                        search.setName(n1);
+                        list = nameMatchManager.match(chainContext);
+                        if (!list.isEmpty()) {
+                            break;
+                        }
+                    }
+                }
+
+            } else {
                 //非中文
                 list = nameMatchManager.match(chainContext);
             }
