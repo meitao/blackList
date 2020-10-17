@@ -19,7 +19,8 @@ public class ChineseTest {
 
         String a = "asdadsa";
         String b = "dadsa";
-
+        a = "中".toUpperCase();
+        int d=Runtime.getRuntime().availableProcessors()/2;
         b=b.substring(0,b.length());
         a=a.substring(0,b.length());
 

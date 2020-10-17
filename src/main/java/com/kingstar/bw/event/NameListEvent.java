@@ -103,7 +103,7 @@ public class NameListEvent implements InitDataEvent {
      * @param param
      */
     private void initData(ResultSet rs, Map param) throws SQLException {
-        String name = rs.getString("NAME");
+        String name = rs.getString("NAME").replaceAll(" ","").replaceAll(",","").toLowerCase();
         String id = rs.getString("ID");
         if (StringUtils.isEmpty(name)) {
             return;

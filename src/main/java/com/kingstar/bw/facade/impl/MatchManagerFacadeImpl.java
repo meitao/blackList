@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * @Author: meitao
@@ -28,10 +29,14 @@ public class MatchManagerFacadeImpl implements MatchManagerFacade {
     @Autowired
     MutilNumberMatchManager numberMatchManager;
 
-
+    Semaphore semaphore = new Semaphore(1);
     @Override
     public List<ChainContext> match(ChainContext chainContext) {
-
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Search search = chainContext.getSearch();
         //判断名称和证件号码是否有一个存在,有则继续匹配,没有则报错
         if (StringUtils.isEmpty(search.getNumber()) && StringUtils.isEmpty(search.getName())) {
@@ -44,8 +49,8 @@ public class MatchManagerFacadeImpl implements MatchManagerFacade {
         }
         List<ChainContext> list;
         if (!StringUtils.isEmpty(search.getName())) {
-            //去掉空格
-            search.setName(search.getName().replaceAll(" ", ""));
+            //去掉空格,大写
+            search.setName(search.getName().replaceAll(" ", "").toLowerCase());
             //中文
             if (ChineseUtil.isChinese(search.getName())) {
                 //简体字的校验
@@ -84,6 +89,7 @@ public class MatchManagerFacadeImpl implements MatchManagerFacade {
         } else {
             list = numberMatchManager.match(chainContext);
         }
+        semaphore.release();
         return list;
     }
 }

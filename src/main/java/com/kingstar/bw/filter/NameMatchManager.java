@@ -30,7 +30,7 @@ public class NameMatchManager implements MatchManager {
 
     //多线程处理匹配
     private ExecutorService executorService =
-            new ThreadPoolExecutor(4, 4,
+            new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors()/2, Runtime.getRuntime().availableProcessors()/2,
                     0L, TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<Runnable>(1000000), new ThreadFactory() {
                 @Override
